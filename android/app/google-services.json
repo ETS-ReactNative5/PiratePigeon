@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1968068986",
+    "project_id": "pirate-pigeon",
+    "storage_bucket": "pirate-pigeon.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1968068986:android:7708e88b08169d791d5ec3",
+        "android_client_info": {
+          "package_name": "com.piratepigeon"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1968068986-pa0bn3us3e0r8o9du93th7k7f8ehl2vm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCavKpThCgsvR3bgmyAlGSVRC0cEKSstvQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1968068986-pa0bn3us3e0r8o9du93th7k7f8ehl2vm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
