@@ -1,10 +1,119 @@
 import React, { Component } from "react";
-import { StyleSheet, View, Image, Text, TouchableOpacity } from "react-native";
+import { StyleSheet, View, Image, Text, TouchableOpacity, Dimensions } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 
-function GoogleSignUp(props) {
+import auth from '@react-native-firebase/auth';
+import firestore from "@react-native-firebase/firestore";
+import { GoogleSignin ,GoogleSigninButton, statusCodes} from '@react-native-google-signin/google-signin';
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useState } from "react";
+
+function GoogleSignUp({navigation,props}) {
+
+  const[token,settoken]=useState("");
+
+
+  const fetch_user_token = async() => {
+    try {
+      let value = await AsyncStorage.getItem('fmctoken')
+      if(value !== null) {
+        settoken(value);
+      }
+    } catch(e) {
+      // error reading value
+    }  
+  }
+
+  React.useEffect(() => {
+    fetch_user_token();
+  });
+
+  const updating_fmctoken_data_to_firebase = async (userInfo) => {
+    firestore()
+      .collection('Users')
+      .doc(userInfo.user.id)
+      .set({
+        email: userInfo.user.email,
+        name: userInfo.user.name,
+        token:token,
+      })
+      .then(() => {
+        console.log('User data added!');
+      });
+  }
+
+
+  const _sign = async () => {
+    try {
+      GoogleSignin.configure({
+        webClientId:
+          '1968068986-pa0bn3us3e0r8o9du93th7k7f8ehl2vm.apps.googleusercontent.com',
+        webClientSecret:
+          'GltiEqPh_P__67SlNUyBR9kB',
+        offlineAccess: true,
+        hostedDomain: '',
+        loginHint: '',
+        forceConsentPrompt: true,
+        accountName: '',
+      });
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      const credential = auth.GoogleAuthProvider.credential(
+        userInfo.idToken,
+        userInfo.accessToken,
+        userInfo.user,
+        userInfo.serverAuthCode,
+      );
+      console.log(userInfo)
+      const firebaseUserCredential = await auth().signInWithCredential(credential);
+      console.log(firebaseUserCredential);
+      await AsyncStorage.setItem('email',String(firebaseUserCredential.additionalUserInfo.profile.email + ''),);
+      await AsyncStorage.setItem('name',String(firebaseUserCredential.additionalUserInfo.profile.displayName),);
+      await AsyncStorage.setItem('userId',String(userInfo.user.id),);
+      updating_fmctoken_data_to_firebase(userInfo);
+      navigation.navigate("CreateRoom")
+    } catch (error) {
+      // alert(error)
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        // user cancelled the login flow
+        Alert.alert('Please Sign-In to Continue', '', [
+          {
+            text: 'Sign-in',
+            onPress: () => {
+              _sign();
+            },
+          },
+          {
+            text: 'Exit',
+            onPress: () => {
+              BackHandler.exitApp();
+            },
+          },
+        ]);
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        // operation (f.e. sign in) is in progress already
+        // alert('success')
+        // this.props.navigation.navigate('Main');
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        // play services not available or outdated
+        // alert('Play service')
+      } else {
+        // some other error happened
+        alert(error);
+      }
+    }
+  };
+
+  const _logout = async () => {
+    auth()
+      .signOut()
+      .then(() => console.log('User signed out!'));
+  }
+
   return (
     <View style={styles.container}>
+      <Image source={require("../assets/images/background.jpg")} style={{width:"100%", height:"100%", position:"absolute"}}/>
       <Image
         source={require("../assets/images/pigeon-removebg-preview.png")}
         resizeMode="contain"
@@ -21,8 +130,12 @@ function GoogleSignUp(props) {
       </View>
       <Icon name="info" style={styles.icon}></Icon>
       <View style={styles.buttonStack}>
-        <TouchableOpacity style={styles.button}></TouchableOpacity>
-        <Text style={styles.loremIpsum2}>CONTINUE</Text>
+        <TouchableOpacity style={styles.button} onPress={()=>_sign()}>
+          <Text style={styles.buttontxt}>CONTINUE</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.button,{margin:20}]} onPress={()=>_logout()}>
+          <Text style={styles.buttontxt}>LOGOUT</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -39,7 +152,7 @@ const styles = StyleSheet.create({
     marginLeft: 110
   },
   piratePigeon1: {
-    fontFamily: "zen-dots-regular",
+    fontFamily: "ZenDots",
     color: "#121212",
     textAlign: "center",
     fontSize: 25,
@@ -73,30 +186,27 @@ const styles = StyleSheet.create({
     marginRight: 1
   },
   button: {
-    top: 0,
-    left: 0,
-    width: 170,
-    height: 49,
-    position: "absolute",
+    width: Dimensions.get('window').width-50,
+    height: 40,
+    alignSelf:"center",
+    alignItems:"center",
     backgroundColor: "rgba(23,95,197,1)",
-    borderWidth: 0,
-    borderColor: "#000000",
-    borderRadius: 100
+    borderRadius: 100,
+    justifyContent:"center"
   },
-  loremIpsum2: {
-    top: 16,
-    left: 8,
+  buttontxt: {
     position: "absolute",
-    fontFamily: "zen-dots-regular",
+    fontFamily: "ZenDots",
     color: "rgba(255,255,255,1)",
     textAlign: "center",
-    fontSize: 15
+    fontSize: 15,
+    alignSelf:"center",
   },
   buttonStack: {
     width: 173,
     height: 49,
     marginTop: 425,
-    marginLeft: 105
+    alignSelf:"center",
   }
 });
 

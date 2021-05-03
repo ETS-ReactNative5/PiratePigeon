@@ -1,22 +1,21 @@
 import React, { Component } from "react";
-import { StyleSheet, View, Image, Text, TouchableOpacity } from "react-native";
+import { StyleSheet, View, Image, Text, TouchableOpacity, Dimensions } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 
-function SplashScreen(props) {
+function SplashScreen({navigation}) {
   return (
     <View style={styles.container}>
+      <Image source={require("../assets/images/background.jpg")} style={{width:"100%", height:"100%", position:"absolute"}}/>
+      <Icon name="info" style={styles.icon1}></Icon>
       <Image
         source={require("../assets/images/pigeon-removebg-preview.png")}
         resizeMode="contain"
         style={styles.image}
       ></Image>
-      <Text style={styles.loremIpsum}></Text>
-      <TouchableOpacity style={styles.button}>
-        <View style={styles.loremIpsum4Filler}></View>
-        <Text style={styles.loremIpsum4}>Welcome to Pirate Pigeon</Text>
-      </TouchableOpacity>
       <Text style={styles.piratePigeon}>PIRATE PIGEON</Text>
-      <Icon name="info" style={styles.icon1}></Icon>
+      <TouchableOpacity style={styles.button} onPress={()=>navigation.navigate("GoogleSignUp")}>
+        <Text style={styles.buttomtxt}>Welcome to Pirate Pigeon</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -31,44 +30,32 @@ const styles = StyleSheet.create({
     marginTop: 70,
     marginLeft: 124
   },
-  loremIpsum: {
-    fontFamily: "roboto-regular",
-    color: "#121212",
-    marginTop: 378,
-    marginLeft: 141
-  },
   button: {
     backgroundColor: "rgba(23,95,197,1)",
     borderRadius: 100,
-    width: 390,
-    height: 44,
-    marginTop: 52,
-    marginLeft: 29
+    width:Dimensions.get('window').width-50,
+    height:40,
+    alignSelf:"center",
+    justifyContent:"center",
+    top:"45%",
   },
-  loremIpsum4Filler: {
-    flex: 1
-  },
-  loremIpsum4: {
-    fontFamily: "roboto-700",
+  buttomtxt: {
+    fontFamily: "ZenDots",
     color: "rgba(255,255,255,1)",
     textAlign: "center",
     fontSize: 15,
-    marginBottom: 13,
-    marginLeft: 42
+    alignSelf:"center",
   },
   piratePigeon: {
-    fontFamily: "roboto-700",
+    fontFamily: "ZenDots",
     color: "#121212",
     textAlign: "center",
-    fontSize: 25,
-    marginTop: -434
+    fontSize:25,
   },
   icon1: {
     color: "rgba(23,95,197,1)",
     fontSize: 50,
     alignSelf: "flex-end",
-    marginTop: -340,
-    marginRight: 1
   }
 });
 

@@ -1,112 +1,83 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-
 import React from 'react';
-import type {Node} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import {StatusBar, Image, } from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const Section = ({children, title}): Node => {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
+import SplashScreen from "./src/screens/SplashScreen";
+import GoogleSignUp from "./src/screens/GoogleSignUp";
+import CreateRoom from "./src/screens/CreateRoom";
+import ChatScreen from "./src/screens/ChatScreen";
+
+import firebase from "@react-native-firebase/app"
+
+import PushNotification from "react-native-push-notification";
+
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+
+const Stack = createStackNavigator();
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAwmI3Rkd84W2paR5db55_hf5eQWZE17bg",
+  authDomain: "pirate-pigeon.firebaseapp.com",
+  projectId: "pirate-pigeon",
+  storageBucket: "pirate-pigeon.appspot.com",
+  messagingSenderId: "1968068986",
+  appId: "1:1968068986:web:b8a6587b6985cc5f1d5ec3",
+  measurementId: "G-P9B9YEPBDV"
 };
 
-const App: () => Node = () => {
-  const isDarkMode = useColorScheme() === 'dark';
+const App = () => {
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+  const save_notification_token = async (token) => {
+    await AsyncStorage.setItem('fmctoken',String(token),);
+  }
+
+  React.useEffect(() => {
+    if (!firebase.apps.length) {
+      const app =firebase.initializeApp(firebaseConfig);       // FIREBASE INITILIZE
+    }
+  });
+
+  React.useEffect(() => {                       //PUSH NOTIFICATION AND TOKEN GENRATE
+    PushNotification.configure({
+      onRegister: function (token) {
+        console.log("TOKEN:", token);
+        save_notification_token(token.token)
+      },
+      onNotification: function (notification) {
+        console.log("NOTIFICATION:", notification);
+      },
+      onAction: function (notification) {
+        console.log("ACTION:", notification.action);
+        console.log("NOTIFICATION:", notification);
+      },
+      onRegistrationError: function(err) {
+        console.error(err.message, err);
+      },
+      permissions: {
+        alert: true,
+        badge: true,
+        sound: true,
+      },
+      popInitialNotification: true,
+      requestPermissions: true,
+    });
+  },[]);
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.js</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    <>
+      <NavigationContainer>
+        <StatusBar backgroundColor="black" />
+        <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={"SplashScreen"}>  
+          <Stack.Screen name="SplashScreen" component={SplashScreen} />
+          <Stack.Screen name="CreateRoom" component={CreateRoom} />
+          <Stack.Screen name="GoogleSignUp" component={GoogleSignUp} />
+          <Stack.Screen name="ChatScreen" component={ChatScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </>
   );
 };
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
 
 export default App;

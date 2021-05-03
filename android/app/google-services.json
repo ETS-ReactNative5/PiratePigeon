@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1968068986-iibll61j23balk6kn9cr4hnucalh2g9s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.piratepigeon",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
           "client_id": "1968068986-pa0bn3us3e0r8o9du93th7k7f8ehl2vm.apps.googleusercontent.com",
           "client_type": 3
         }

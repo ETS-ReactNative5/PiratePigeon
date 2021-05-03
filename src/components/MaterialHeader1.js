@@ -12,13 +12,7 @@ function MaterialHeader1(props) {
             style={styles.leftIcon}
           ></MaterialCommunityIconsIcon>
         </TouchableOpacity>
-        <View style={styles.textWrapper}>
-          <Text numberOfLines={1} style={styles.friendName}>
-            Friend Name
-          </Text>
-        </View>
       </View>
-      <View style={styles.leftIconButtonRowFiller}></View>
       <TouchableOpacity style={styles.rightIconButton}>
         <MaterialCommunityIconsIcon
           name="dots-vertical"
@@ -53,10 +47,6 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 24
   },
-  textWrapper: {
-    marginLeft: 20,
-    marginTop: 14
-  },
   friendName: {
     fontSize: 14,
     color: "#FFFFFF",
@@ -66,18 +56,11 @@ const styles = StyleSheet.create({
   leftIconButtonRow: {
     height: 48,
     flexDirection: "row",
-    marginLeft: 5,
-    marginTop: 5
-  },
-  leftIconButtonRowFiller: {
-    flex: 1,
-    flexDirection: "row"
+
   },
   rightIconButton: {
     padding: 11,
     alignItems: "center",
-    marginRight: 5,
-    marginTop: 5
   },
   rightIcon: {
     backgroundColor: "transparent",

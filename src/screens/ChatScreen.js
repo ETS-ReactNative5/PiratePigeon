@@ -1,41 +1,42 @@
-import React, { Component } from "react";
-import { StyleSheet, View, ScrollView, Text, TextInput } from "react-native";
+import React, { Component, useState } from "react";
+import { StyleSheet, View, ScrollView, Text, TextInput, TouchableOpacity, Image} from "react-native";
 import MaterialHeader1 from "../components/MaterialHeader1";
 import ChatBox from "../components/ChatBox";
 import Icon from "react-native-vector-icons/Feather";
 
+import CryptoJS from "react-native-crypto-js";
+
 function ChatScreen(props) {
+
+  const [textMessage,set_textMessage]=useState("");
+
+  const text_enc_dec_test = async () => {
+    alert(textMessage);
+    // Encrypt
+    let ciphertext = CryptoJS.AES.encrypt(textMessage, '123456').toString();
+    console.log("Encripted Text : - ", ciphertext)
+    // Decrypt
+    let bytes  = CryptoJS.AES.decrypt(ciphertext, '123456');
+    let originalText = bytes.toString(CryptoJS.enc.Utf8);
+ 
+    console.log("Decripted Text : - ", originalText) // 'my message'
+    set_textMessage("");
+  }
+
+
   return (
     <View style={styles.container}>
-      <MaterialHeader1 style={styles.materialHeader1}></MaterialHeader1>
-      <View style={styles.scrollAreaStackStack}>
-        <View style={styles.scrollAreaStack}>
-          <View style={styles.scrollArea}>
-            <ScrollView
-              contentContainerStyle={styles.scrollArea_contentContainerStyle}
-            >
-              <View style={styles.stackFiller}></View>
-              <View style={styles.chatBoxStack}>
-                <ChatBox style={styles.chatBox}></ChatBox>
-                <Text style={styles.userName}>UserName</Text>
-                <Text style={styles.loremIpsum}>
-                  hey hi how are you user i am fne what about you how is it
-                  going about
-                </Text>
-                <Text style={styles.loremIpsum4}></Text>
-              </View>
-            </ScrollView>
-          </View>
-          <TextInput
-            placeholder="Type a message ..."
-            keyboardAppearance="default"
-            maxLength={500}
-            multiline={true}
-            style={styles.typeAMessage}
-          ></TextInput>
-        </View>
-        <Icon name="send" style={styles.icon}></Icon>
+      <MaterialHeader1 style={styles.materialHeader1}/>
+      <ScrollView/>
+
+      <View style={styles.msginput}>
+          <TextInput style={styles.input} value={textMessage} multiline={true} onChangeText={(text) => { set_textMessage(text);}} placeholder="Type Message Here..." maxLength={300}/>
+          <TouchableOpacity onPress={()=>{text_enc_dec_test()}} style={{paddingBottom: 10, marginLeft: 5}}>
+            <Image source={require('../assets/images/send-button.png')} style={{width: 32, height: 32, marginRight: 5, marginLeft: 15,alignSelf:"center"}} />
+          </TouchableOpacity>
       </View>
+
+
     </View>
   );
 }
@@ -46,109 +47,29 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(244,237,237,1)"
   },
   materialHeader1: {
-    height: 56
+    height: 50,
   },
-  scrollArea: {
-    top: 0,
-    left: 0,
-    position: "absolute",
-    backgroundColor: "rgba(255,255,255,1)",
-    right: 0,
-    bottom: 56,
-    borderWidth: 0,
-    borderColor: "#000000",
-    shadowColor: "rgba(0,0,0,1)",
-    shadowOffset: {
-      width: 3,
-      height: 3
-    },
-    elevation: 5,
-    shadowOpacity: 0.01,
-    shadowRadius: 0,
-    borderRadius: 15
+  input: {
+    padding: 10,
+    borderWidth: 2,
+    borderColor: '#cccc',
+    width: '75%',
+    marginBottom:0,
+    borderRadius: 5,
+    color: '#000000',
+    alignSelf:"center",
+    flexDirection:"row",
+    fontFamily: "ZenDots",
   },
-  scrollArea_contentContainerStyle: {
-    height: 685,
-    flexDirection: "row"
+  msginput:{
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 5,
+    marginBottom:10,
+    alignSelf:"center",
+    backgroundColor:"#f0f0f0",
+    margin:10,
   },
-  stackFiller: {
-    flex: 1,
-    flexDirection: "row"
-  },
-  chatBox: {
-    position: "absolute",
-    height: 101,
-    width: 295,
-    backgroundColor: "rgba(57,123,226,1)",
-    top: 0,
-    right: 1
-  },
-  userName: {
-    top: 10,
-    position: "absolute",
-    fontFamily: "zen-dots-regular",
-    color: "rgba(255,255,255,1)",
-    fontSize: 14,
-    height: 14,
-    width: 252,
-    right: 35
-  },
-  loremIpsum: {
-    top: 33,
-    position: "absolute",
-    fontFamily: "zen-dots-regular",
-    color: "rgba(255,255,255,1)",
-    width: 287,
-    height: 35,
-    right: 0,
-    fontSize: 12
-  },
-  loremIpsum4: {
-    top: 79,
-    position: "absolute",
-    fontFamily: "zen-dots-regular",
-    color: "rgba(255,255,255,1)",
-    right: 24,
-    fontSize: 8
-  },
-  chatBoxStack: {
-    width: 296,
-    height: 101,
-    marginRight: 9,
-    marginTop: 17
-  },
-  typeAMessage: {
-    top: 684,
-    left: 0,
-    position: "absolute",
-    fontFamily: "roboto-regular",
-    color: "#121212",
-    height: 57,
-    width: 320,
-    backgroundColor: "rgba(255,255,255,1)",
-    borderWidth: 1,
-    borderColor: "rgba(57,123,226,1)"
-  },
-  scrollAreaStack: {
-    top: 0,
-    left: 0,
-    position: "absolute",
-    right: 0,
-    bottom: 0
-  },
-  icon: {
-    position: "absolute",
-    color: "rgba(57,123,226,1)",
-    fontSize: 47,
-    right: 3,
-    bottom: 5
-  },
-  scrollAreaStackStack: {
-    flex: 1,
-    marginTop: 15,
-    marginLeft: 6,
-    marginRight: 6
-  }
 });
 
 export default ChatScreen;
