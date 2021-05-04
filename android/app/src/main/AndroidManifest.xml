@@ -2,9 +2,10 @@
   package="com.piratepigeon">
 
     <uses-permission android:name="android.permission.INTERNET" />
-        <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
- 
+    <permission android:name="com.name.name.permission.C2D_MESSAGE" android:protectionLevel="signature" />
+    <uses-permission android:name="com.name.name.permission.C2D_MESSAGE" />
 
 
     <application
@@ -19,7 +20,8 @@
         android:label="@string/app_name"
         android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
         android:launchMode="singleTask"
-        android:windowSoftInputMode="adjustResize">
+        android:windowSoftInputMode="adjustResize"
+        android:screenOrientation="portrait">
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />

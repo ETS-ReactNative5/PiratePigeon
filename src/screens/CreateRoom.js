@@ -1,21 +1,64 @@
 import React, { Component } from "react";
 import { useState } from "react";
-import { StyleSheet, View, Image, Text, TouchableOpacity, Dimensions, Alert, TextInput} from "react-native";
-import Icon from "react-native-vector-icons/Feather";
+import { StyleSheet, View, Image, Text, TouchableOpacity, Dimensions, Alert, TextInput, Share} from "react-native";
 
+import database from "@react-native-firebase/database";
+import auth from "@react-native-firebase/auth"
 import Clipboard from "@react-native-clipboard/clipboard";
 
 function CreateRoom({navigation}) {
 
   const [enter,setenter] =useState(false);
   const [roomID,setroomID]=useState("");
+  const [appLink,setappLink]=useState("")
 
-  const clipboard_alert_window = () =>{
+  const get_share_data = async () => {
+    database()
+      .ref("AppShareData")
+      .on("value", (snapshot) => {
+        let messageList = [];
+        snapshot.forEach((snap) => {
+          messageList.push(snap.val());
+        });
+        setappLink(messageList);
+      });
+  }
+
+
+  React.useEffect(() => {
+    get_share_data();
+  }, []);
+
+
+  const onShare = async (temp) => {
+    console.log(appLink);
+    try {
+      const result = await Share.share({
+        message:
+        "Hey Friend, \t I found this really amazing private messanging app. \t You can download it from below link on Google Play Store."+"\n"+"App Link :- "+appLink+"\n"+"Step 1 :- Download and Open\n Step 2 :- SignIn using Google\n Step 3 :- Copy the below Room ID and enter Room Id \n Step 4 :- Start Chatting with me !"+"\n"+"All the chat in this app is encrypted and no permission required ."+"\n"+"Room ID : -  "+temp,
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
+
+  const clipboard_alert_window = (temp) =>{
     Alert.alert(
       "Room Id Copy to Clipboard",
       "Share the copy Room Id with friend and Enter room Id to Continue chatting",
       [
-        { text: "OK", onPress: () => console.log("OK Pressed") }
+        { text: "OK", onPress: () => console.log("OK Pressed") },
+        { text: "Share", onPress: () => onShare(temp) }
       ]
     );
   }
@@ -26,9 +69,24 @@ function CreateRoom({navigation}) {
     };
     let temp = (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4()+S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4()+S4()+S4()+S4()+S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
     Clipboard.setString(temp);
-    clipboard_alert_window()
+    console.log(temp);
+    clipboard_alert_window(temp);
   }
 
+  const checkroomID = async => {
+    if(roomID.length===120){
+      navigation.navigate("ChatScreen",{roomID:roomID})
+    }
+    else{
+      alert("Invalid Room Id")
+    }
+  }
+
+  const _logout = async () => {
+    auth()
+      .signOut()
+      .then(() => console.log('User signed out!'));
+  }
   
 
   return (
@@ -43,18 +101,24 @@ function CreateRoom({navigation}) {
       {
         enter===false?
         <>
-          <TouchableOpacity style={styles.button} onPress={()=>setenter(true)}>
+          <TouchableOpacity style={[styles.button,{marginTop:20}]} onPress={()=>setenter(true)}>
             <Text style={styles.enterRoomId}>Enter Room ID</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.button1} onPress={()=>genrate_room_id()}>
             <Text style={styles.genrateRoomId}>Genrate Room ID</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.button,{margin:30}]} onPress={()=>_logout()}>
+            <Text style={styles.buttontxt}>LOGOUT</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={()=>navigation.navigate("NeedHelpScreen")}>
+            <Text style={styles.needhelp}>Need Help ?</Text>
           </TouchableOpacity>
         </>
         :
         enter===true?
         <>
           <TextInput style={styles.textInput} placeholder="Enter Rooom ID" onChangeText={(text)=>setroomID(text)} />
-          <TouchableOpacity style={styles.button1} onPress={()=>{setenter(false);navigation.navigate("ChatScreen")}}>
+          <TouchableOpacity style={styles.button1} onPress={()=>{setenter(false);checkroomID()}}>
             <Text style={styles.genrateRoomId}>Enter</Text>
           </TouchableOpacity>
         </>
@@ -70,10 +134,10 @@ const styles = StyleSheet.create({
     flex: 1
   },
   image1: {
-    width: 206,
+    width: 200,
     height: 200,
     marginTop: 70,
-    marginLeft: 115
+    alignSelf:"center",
   },
   piratePigeon1: {
     fontFamily: "ZenDots",
@@ -81,7 +145,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 25,
     marginTop: 38,
-    marginRight: 1
   },
   button: {
     width: Dimensions.get('window').width-50,
@@ -124,13 +187,26 @@ const styles = StyleSheet.create({
     color: "rgba(255,255,255,1)",
     textAlign: "center",
   },
-  icon1: {
-    color: "rgba(23,95,197,1)",
-    fontSize: 50,
-    alignSelf: "flex-end",
-    marginTop: -513,
-    marginRight: 1
-  }
+  button: {
+    width: Dimensions.get('window').width-50,
+    height: 40,
+    alignSelf:"center",
+    alignItems:"center",
+    backgroundColor: "rgba(23,95,197,1)",
+    borderRadius: 100,
+    justifyContent:"center"
+  },
+  buttontxt: {
+    position: "absolute",
+    fontFamily: "ZenDots",
+    color: "rgba(255,255,255,1)",
+    textAlign: "center",
+    fontSize: 15,
+    alignSelf:"center",
+  },
+  needhelp:{
+    alignSelf:"center",
+  },
 });
 
 export default CreateRoom;

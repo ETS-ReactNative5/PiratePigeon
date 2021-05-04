@@ -1,12 +1,11 @@
 import React, { Component } from "react";
-import { StyleSheet, View, Image, Text, TouchableOpacity, Dimensions } from "react-native";
-import Icon from "react-native-vector-icons/Feather";
+import { StyleSheet, View, Image, Text, TouchableOpacity, Dimensions, Alert} from "react-native";
 
 function SplashScreen({navigation}) {
+
   return (
     <View style={styles.container}>
       <Image source={require("../assets/images/background.jpg")} style={{width:"100%", height:"100%", position:"absolute"}}/>
-      <Icon name="info" style={styles.icon1}></Icon>
       <Image
         source={require("../assets/images/pigeon-removebg-preview.png")}
         resizeMode="contain"
@@ -28,7 +27,7 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     marginTop: 70,
-    marginLeft: 124
+    alignSelf:"center",
   },
   button: {
     backgroundColor: "rgba(23,95,197,1)",
@@ -37,7 +36,7 @@ const styles = StyleSheet.create({
     height:40,
     alignSelf:"center",
     justifyContent:"center",
-    top:"45%",
+    top:"40%",
   },
   buttomtxt: {
     fontFamily: "ZenDots",

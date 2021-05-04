@@ -69,7 +69,7 @@ function GoogleSignUp({navigation,props}) {
       const firebaseUserCredential = await auth().signInWithCredential(credential);
       console.log(firebaseUserCredential);
       await AsyncStorage.setItem('email',String(firebaseUserCredential.additionalUserInfo.profile.email + ''),);
-      await AsyncStorage.setItem('name',String(firebaseUserCredential.additionalUserInfo.profile.displayName),);
+      await AsyncStorage.setItem('name',String(firebaseUserCredential.additionalUserInfo.profile.name),);
       await AsyncStorage.setItem('userId',String(userInfo.user.id),);
       updating_fmctoken_data_to_firebase(userInfo);
       navigation.navigate("CreateRoom")
@@ -105,11 +105,7 @@ function GoogleSignUp({navigation,props}) {
     }
   };
 
-  const _logout = async () => {
-    auth()
-      .signOut()
-      .then(() => console.log('User signed out!'));
-  }
+
 
   return (
     <View style={styles.container}>
@@ -128,13 +124,9 @@ function GoogleSignUp({navigation,props}) {
         ></Image>
         <Text style={styles.loremIpsum}>Google Sign up Required</Text>
       </View>
-      <Icon name="info" style={styles.icon}></Icon>
       <View style={styles.buttonStack}>
         <TouchableOpacity style={styles.button} onPress={()=>_sign()}>
           <Text style={styles.buttontxt}>CONTINUE</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.button,{margin:20}]} onPress={()=>_logout()}>
-          <Text style={styles.buttontxt}>LOGOUT</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -146,10 +138,10 @@ const styles = StyleSheet.create({
     flex: 1
   },
   image1: {
-    width: 197,
+    width: 200,
     height: 200,
     marginTop: 70,
-    marginLeft: 110
+    alignSelf:"center",
   },
   piratePigeon1: {
     fontFamily: "ZenDots",
@@ -176,7 +168,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginTop: 36,
     marginLeft: 25,
-    marginRight: 22
+    marginRight: 22,
   },
   icon: {
     color: "rgba(23,95,197,1)",
@@ -205,7 +197,7 @@ const styles = StyleSheet.create({
   buttonStack: {
     width: 173,
     height: 49,
-    marginTop: 425,
+    marginTop: "10%",
     alignSelf:"center",
   }
 });
