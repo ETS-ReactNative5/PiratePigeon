@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { StyleSheet, View, Image, Text, TouchableOpacity, Dimensions } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 
+import database from "@react-native-firebase/database";
+
 import auth from '@react-native-firebase/auth';
 import firestore from "@react-native-firebase/firestore";
 import { GoogleSignin ,GoogleSigninButton, statusCodes} from '@react-native-google-signin/google-signin';
@@ -12,6 +14,9 @@ import { useState } from "react";
 function GoogleSignUp({navigation,props}) {
 
   const[token,settoken]=useState("");
+
+  const [current_user_signIN,setcurrent_user_signIN]=useState(0);
+
 
 
   const fetch_user_token = async() => {
@@ -39,10 +44,9 @@ function GoogleSignUp({navigation,props}) {
         token:token,
       })
       .then(() => {
-        console.log('User data added!');
+        navigation.navigate("CreateRoom")
       });
   }
-
 
   const _sign = async () => {
     try {
@@ -65,14 +69,11 @@ function GoogleSignUp({navigation,props}) {
         userInfo.user,
         userInfo.serverAuthCode,
       );
-      console.log(userInfo)
       const firebaseUserCredential = await auth().signInWithCredential(credential);
-      console.log(firebaseUserCredential);
       await AsyncStorage.setItem('email',String(firebaseUserCredential.additionalUserInfo.profile.email + ''),);
       await AsyncStorage.setItem('name',String(firebaseUserCredential.additionalUserInfo.profile.name),);
       await AsyncStorage.setItem('userId',String(userInfo.user.id),);
       updating_fmctoken_data_to_firebase(userInfo);
-      navigation.navigate("CreateRoom")
     } catch (error) {
       // alert(error)
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {

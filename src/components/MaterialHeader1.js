@@ -2,6 +2,8 @@ import React, { Component,useState } from "react";
 import { StyleSheet, View, TouchableOpacity, Text, Modal, Pressable} from "react-native";
 import MaterialCommunityIconsIcon from "react-native-vector-icons/MaterialCommunityIcons";
 
+import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons"
+
 import database from "@react-native-firebase/database";
 
 function MaterialHeader1({navigation,roomID}) {
@@ -27,10 +29,10 @@ function MaterialHeader1({navigation,roomID}) {
         </TouchableOpacity>
       </View>
       <TouchableOpacity style={styles.rightIconButton} onPress={()=>setModalVisible(!modalVisible)}>
-        <MaterialCommunityIconsIcon
-          name="dots-vertical"
+        <MaterialCommunityIcon
+          name="delete"
           style={styles.rightIcon}
-        ></MaterialCommunityIconsIcon>
+          />
       </TouchableOpacity>
       <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(!modalVisible)}>
         <View style={styles.centeredView}>
@@ -122,7 +124,8 @@ const styles = StyleSheet.create({
   },
   modalText: {
     marginBottom: 15,
-    textAlign: "center"
+    textAlign: "center",
+    fontFamily:"ZenDots",
   },
   button: {
     borderRadius: 20,
@@ -136,7 +139,8 @@ const styles = StyleSheet.create({
   textStyle: {
     color: "white",
     fontWeight: "bold",
-    textAlign: "center"
+    textAlign: "center",
+    fontFamily:"ZenDots",
   },
 });
 

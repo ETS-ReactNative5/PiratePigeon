@@ -16,7 +16,6 @@ interface ChatScreenProp {
 }
 
 function ChatScreen({navigation,route}) {
-  console.log(route.params.roomID)
 
   let roomId = route.params.roomID;
   const flatlistRef = useRef();

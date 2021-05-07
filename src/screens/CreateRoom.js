@@ -16,11 +16,7 @@ function CreateRoom({navigation}) {
     database()
       .ref("AppShareData")
       .on("value", (snapshot) => {
-        let messageList = [];
-        snapshot.forEach((snap) => {
-          messageList.push(snap.val());
-        });
-        setappLink(messageList);
+        setappLink(snapshot.val());
       });
   }
 
@@ -31,7 +27,6 @@ function CreateRoom({navigation}) {
 
 
   const onShare = async (temp) => {
-    console.log(appLink);
     try {
       const result = await Share.share({
         message:
@@ -57,7 +52,7 @@ function CreateRoom({navigation}) {
       "Room Id Copy to Clipboard",
       "Share the copy Room Id with friend and Enter room Id to Continue chatting",
       [
-        { text: "OK", onPress: () => console.log("OK Pressed") },
+        { text: "OK", onPress: () => {} },
         { text: "Share", onPress: () => onShare(temp) }
       ]
     );
@@ -69,7 +64,6 @@ function CreateRoom({navigation}) {
     };
     let temp = (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4()+S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4()+S4()+S4()+S4()+S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
     Clipboard.setString(temp);
-    console.log(temp);
     clipboard_alert_window(temp);
   }
 
@@ -85,7 +79,7 @@ function CreateRoom({navigation}) {
   const _logout = async () => {
     auth()
       .signOut()
-      .then(() => console.log('User signed out!'));
+      .then(() => {});
   }
   
 
@@ -206,6 +200,7 @@ const styles = StyleSheet.create({
   },
   needhelp:{
     alignSelf:"center",
+    fontFamily: "ZenDots",
   },
 });
 

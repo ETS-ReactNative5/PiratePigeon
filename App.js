@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {StatusBar, Image, } from 'react-native';
+import {StatusBar, Linking, } from 'react-native';
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -45,15 +45,16 @@ const App = () => {
   React.useEffect(() => {                       //PUSH NOTIFICATION AND TOKEN GENRATE
     PushNotification.configure({
       onRegister: function (token) {
-        console.log("TOKEN:", token);
         save_notification_token(token.token)
       },
       onNotification: function (notification) {
-        console.log("NOTIFICATION:", notification);
+        console.log("NOTIFICATION 1 : ", notification.data.link);
+        Linking.openURL(notification.data.link)
+
       },
       onAction: function (notification) {
         console.log("ACTION:", notification.action);
-        console.log("NOTIFICATION:", notification);
+        console.log("NOTIFICATION 2 : ", notification);
       },
       onRegistrationError: function(err) {
         console.error(err.message, err);

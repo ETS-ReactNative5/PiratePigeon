@@ -62,6 +62,7 @@ function NeedHelpScreen({navigation}) {
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
                         <Text style={styles.modalText}>{"Terms & Conditions"}</Text>
+                        <Text style={{fontFamily: "ZenDots",margin:10,justifyContent:"center",textAlign:"center"}}>{"Send a queryies asking for terms and we will mail down down to you as soon as possible !"}</Text>
                         <Pressable style={[styles.button, styles.buttonClose]} onPress={() => setModalVisible(!modalVisible)}>
                             <Text style={styles.textStyle}>Close</Text>
                         </Pressable>
@@ -109,6 +110,7 @@ const styles = StyleSheet.create({
         margin: 20,
         backgroundColor: "white",
         borderRadius: 20,
+        borderWidth:0.8,
         padding: 35,
         alignItems: "center",
         shadowColor: "#000",
@@ -134,11 +136,13 @@ const styles = StyleSheet.create({
     textStyle: {
         color: "white",
         fontWeight: "bold",
-        textAlign: "center"
+        textAlign: "center",
+        fontFamily: "ZenDots",
     },
     modalText: {
         marginBottom: 15,
-        textAlign: "center"
+        textAlign: "center",
+        fontFamily:"ZenDots",
     },
     centeredView: {
         flex: 1,
