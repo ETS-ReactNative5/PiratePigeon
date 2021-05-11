@@ -18,7 +18,7 @@ function LoadingScreen({navigation}) {
     React.useEffect(() => {
       setTimeout(() => {
         check_for_login_user();
-      }, 750);
+      }, 1000);
     }, []);
 
     return (
@@ -37,9 +37,12 @@ function LoadingScreen({navigation}) {
 const styles = StyleSheet.create({
   piratePigeon: {
     fontFamily: "ZenDots",
-    color: "#121212",
+    color: "#ffbf00",
     textAlign: "center",
-    fontSize:25,
+    fontSize: 25,
+    marginTop: 25,
+    textShadowColor: "red",
+    textShadowRadius:5,
   },
   container: {
     flex: 1
@@ -47,8 +50,9 @@ const styles = StyleSheet.create({
   image: {
     width: 200,
     height: 200,
-    marginTop: 70,
-    alignSelf:"center",
+    marginTop: 50,
+    alignSelf: "center",
+    borderRadius:50,
   },
 })
 export default LoadingScreen;

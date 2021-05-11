@@ -130,15 +130,18 @@ const styles = StyleSheet.create({
   image1: {
     width: 200,
     height: 200,
-    marginTop: 70,
-    alignSelf:"center",
+    marginTop: 50,
+    alignSelf: "center",
+    borderRadius:50,
   },
   piratePigeon1: {
     fontFamily: "ZenDots",
-    color: "#121212",
+    color: "#ffbf00",
     textAlign: "center",
     fontSize: 25,
-    marginTop: 38,
+    marginTop: 25,
+    textShadowColor: "red",
+    textShadowRadius:5,
   },
   button: {
     width: Dimensions.get('window').width-50,

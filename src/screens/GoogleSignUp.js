@@ -113,7 +113,6 @@ function GoogleSignUp({navigation,props}) {
       <Image source={require("../assets/images/background.jpg")} style={{width:"100%", height:"100%", position:"absolute"}}/>
       <Image
         source={require("../assets/images/pigeon-removebg-preview.png")}
-        resizeMode="contain"
         style={styles.image1}
       ></Image>
       <Text style={styles.piratePigeon1}>PIRATE PIGEON</Text>
@@ -141,24 +140,29 @@ const styles = StyleSheet.create({
   image1: {
     width: 200,
     height: 200,
-    marginTop: 70,
-    alignSelf:"center",
+    marginTop: 50,
+    alignSelf: "center",
+    borderRadius:50,
   },
   piratePigeon1: {
     fontFamily: "ZenDots",
-    color: "#121212",
+    color: "#ffbf00",
     textAlign: "center",
     fontSize: 25,
-    marginTop: 37,
-    marginRight: 1
+    marginTop: 25,
+    textShadowColor: "red",
+    textShadowRadius:5,
   },
   image2: {
     width: 50,
-    height: 50
+    height: 50,
+    backgroundColor: "white",
+    padding: 25,
+    borderRadius:360,
   },
   loremIpsum: {
     fontFamily: "zen-dots-regular",
-    color: "#121212",
+    color: "white",
     textAlign: "center",
     fontSize: 18,
     marginLeft: 23,

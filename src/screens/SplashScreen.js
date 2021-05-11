@@ -26,8 +26,9 @@ const styles = StyleSheet.create({
   image: {
     width: 200,
     height: 200,
-    marginTop: 70,
-    alignSelf:"center",
+    marginTop: 50,
+    alignSelf: "center",
+    borderRadius:50,
   },
   button: {
     backgroundColor: "rgba(23,95,197,1)",
@@ -47,15 +48,18 @@ const styles = StyleSheet.create({
   },
   piratePigeon: {
     fontFamily: "ZenDots",
-    color: "#121212",
+    color: "#ffbf00",
     textAlign: "center",
-    fontSize:25,
+    fontSize: 25,
+    marginTop: 25,
+    textShadowColor: "red",
+    textShadowRadius:5,
   },
   icon1: {
     color: "rgba(23,95,197,1)",
     fontSize: 50,
     alignSelf: "flex-end",
-  }
+  },
 });
 
 export default SplashScreen;
