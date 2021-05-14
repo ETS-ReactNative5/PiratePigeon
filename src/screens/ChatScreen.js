@@ -83,7 +83,7 @@ function ChatScreen({navigation,route}) {
         ref={flatlistRef}
         style={styles.chatbox}
         data={messageList}
-        keyExtractor={({item}) => console.log()}
+        keyExtractor={({item}) => console.log("Nothing Here !")}
         onContentSizeChange={()=> flatlistRef.current.scrollToEnd({animating: true})}
         renderItem={({item})=><MessageBox item={item} userEmail={userEmail}/>}
       />

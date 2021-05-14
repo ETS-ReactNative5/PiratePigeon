@@ -48,16 +48,16 @@ const App = () => {
         save_notification_token(token.token)
       },
       onNotification: function (notification) {
-        console.log("NOTIFICATION 1 : ", notification.data.link);
+        // console.log("NOTIFICATION 1 : ", notification.data.link);
         Linking.openURL(notification.data.link)
 
       },
       onAction: function (notification) {
-        console.log("ACTION:", notification.action);
-        console.log("NOTIFICATION 2 : ", notification);
+        // console.log("ACTION:", notification.action);
+        // console.log("NOTIFICATION 2 : ", notification);
       },
       onRegistrationError: function(err) {
-        console.error(err.message, err);
+        // console.error(err.message, err);
       },
       permissions: {
         alert: true,
