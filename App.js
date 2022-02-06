@@ -2,21 +2,19 @@ import React, { useState } from 'react';
 import {StatusBar, Linking, } from 'react-native';
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-import SplashScreen from "./src/screens/SplashScreen";
-import GoogleSignUp from "./src/screens/GoogleSignUp";
-import CreateRoom from "./src/screens/CreateRoom";
-import ChatScreen from "./src/screens/ChatScreen";
-import LoadingScreen from "./src/screens/LoadingScreen";
-import NeedHelpScreen from "./src/screens/NeedHelpScreen";
-
-import firebase from "@react-native-firebase/app"
-import auth from "@react-native-firebase/auth";
-
-import PushNotification from "react-native-push-notification";
-
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import firebase from "@react-native-firebase/app"
+import auth from "@react-native-firebase/auth";
+import PushNotification from "react-native-push-notification";
+
+
+
+import GoogleSignUpScreen from './Source/Screen/GoogleSignInScreen';
+import HomeScreen from './Source/Screen/HomeScreen';
+import ChatScreens from './Source/Screen/ChatScreen';
+import EditProfieScreen from './Source/Screen/EditProfieScreen';
+
 
 const Stack = createStackNavigator();
 
@@ -73,13 +71,19 @@ const App = () => {
     <>
       <NavigationContainer>
         <StatusBar backgroundColor="black" />
-        <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={"LoadingScreen"}>  
-          <Stack.Screen name="LoadingScreen" component={LoadingScreen} />
-          <Stack.Screen name="SplashScreen" component={SplashScreen} />
-          <Stack.Screen name="CreateRoom" component={CreateRoom} />
-          <Stack.Screen name="GoogleSignUp" component={GoogleSignUp} />
-          <Stack.Screen name="ChatScreen" component={ChatScreen} />
-          <Stack.Screen name="NeedHelpScreen" component={NeedHelpScreen} />
+        <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={"GoogleSignUpScreen"}>  
+          {/* <Stack.Screen name="LoadingScreen" component={LoadingScreen} /> */}
+          {/* <Stack.Screen name="SplashScreen" component={SplashScreen} /> */}
+          {/* <Stack.Screen name="CreateRoom" component={CreateRoom} /> */}
+          {/* <Stack.Screen name="GoogleSignUp" component={GoogleSignUp} /> */}
+          {/* <Stack.Screen name="ChatScreen" component={ChatScreen} /> */}
+          {/* <Stack.Screen name="NeedHelpScreen" component={NeedHelpScreen} /> */}
+
+          <Stack.Screen name="GoogleSignUpScreen" component={GoogleSignUpScreen} />
+          <Stack.Screen name="HomeScreen" component={HomeScreen} />
+          <Stack.Screen name="ChatScreen" component={ChatScreens} />
+          <Stack.Screen name="EditProfieScreen" component={EditProfieScreen} />
+
         </Stack.Navigator>
       </NavigationContainer>
     </>
