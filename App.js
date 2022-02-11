@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {StatusBar, Linking, } from 'react-native';
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -7,6 +7,9 @@ import { createStackNavigator } from "@react-navigation/stack";
 import firebase from "@react-native-firebase/app"
 import auth from "@react-native-firebase/auth";
 import PushNotification from "react-native-push-notification";
+
+
+import Geolocation from 'react-native-geolocation-service';
 
 
 
@@ -65,6 +68,19 @@ const App = () => {
       popInitialNotification: true,
       requestPermissions: true,
     });
+  },[]);
+
+  React.useEffect(()=>{
+    Geolocation.getCurrentPosition(
+      (position) => {
+        console.log(position);
+      },
+      (error) => {
+        // See error code charts below.
+        console.log(error.code, error.message);
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+  );
   },[]);
 
   return (

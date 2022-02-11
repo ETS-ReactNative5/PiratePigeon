@@ -14,6 +14,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import Color from '../Constant/Color';
 import Constant from '../Constant/Constant';
 import ThemeAction from '../Redux/Action/ThemeAction';
+import GoogleServices from '../Services/GoogleServices';
 
 export default function GoogleSignInScreen({navigation}) {
   const dispatch = useDispatch();
@@ -86,6 +87,11 @@ export default function GoogleSignInScreen({navigation}) {
     },
   });
 
+
+  const _google_sign_in = () => {
+    GoogleServices._sign();
+  }
+
   return (
     <SafeAreaView style={styles.mainframe}>
       <Text style={styles.welcometxt}>{`Welcome to`}</Text>
@@ -107,7 +113,8 @@ export default function GoogleSignInScreen({navigation}) {
           <Text style={styles.themebtntxt}>Dark</Text>
         </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.btn} onPress={()=>navigation.navigate('EditProfieScreen')}>
+      <TouchableOpacity style={styles.btn} onPress={()=>_google_sign_in()}>
+      {/* <TouchableOpacity style={styles.btn} onPress={()=>navigation.navigate('EditProfieScreen')}> */}
         <Text style={styles.btntxt}>Continue with </Text>
         <Image source={Constant.GoogleLogo} style={styles.GoogleLogo} />
       </TouchableOpacity>

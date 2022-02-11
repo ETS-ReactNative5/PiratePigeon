@@ -27,9 +27,10 @@ const _sign = async () => {
         userInfo.serverAuthCode,
       );
       const firebaseUserCredential = await auth().signInWithCredential(credential);
-      await AsyncStorage.setItem('email',String(firebaseUserCredential.additionalUserInfo.profile.email + ''),);
-      await AsyncStorage.setItem('name',String(firebaseUserCredential.additionalUserInfo.profile.name),);
-        
+      // await AsyncStorage.setItem('email',String(firebaseUserCredential.additionalUserInfo.profile.email + ''),);
+      // await AsyncStorage.setItem('name',String(firebaseUserCredential.additionalUserInfo.profile.name),);
+        console.log("SignInDone");
+        alert("Done");
     } catch (error) {
       // alert(error)
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
@@ -61,3 +62,6 @@ const _sign = async () => {
       }
     }
   };
+
+
+  export default {_sign};
