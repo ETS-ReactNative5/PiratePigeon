@@ -9,13 +9,14 @@ import {
 } from 'react-native';
 
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { ProgressBar, Colors } from 'react-native-paper';
+import {ProgressBar, Colors} from 'react-native-paper';
 import {useSelector, useDispatch} from 'react-redux';
+import CryptoJS from 'react-native-crypto-js';
 
 import Color from '../Constant/Color';
 import Constant from '../Constant/Constant';
 
-export default function FinalChatManager({type, id}) {
+export default function FinalChatManager({type, id, item, en_key}) {
   const theme = useSelector(state => state.theme.theme);
   const [imagesdata, set_imagesdata] = useState({
     ImageWidth: 0,
@@ -39,6 +40,12 @@ export default function FinalChatManager({type, id}) {
       );
     }
   }, []);
+
+  const decrypt_msg = (msg) => {
+    let bytes  = CryptoJS.AES.decrypt(msg, en_key);
+    let originalText = bytes.toString(CryptoJS.enc.Utf8);
+    return originalText;
+  }
 
   const styles = StyleSheet.create({
     txtmsgbody: {
@@ -64,7 +71,7 @@ export default function FinalChatManager({type, id}) {
       fontSize: 30,
       color: theme === 'light' ? Color.dark : Color.light,
       alignSelf: 'center',
-      padding:10
+      padding: 10,
     },
     videoplayBtn: {
       position: 'absolute',
@@ -100,11 +107,7 @@ export default function FinalChatManager({type, id}) {
   return (
     <>
       {type === 'message' ? (
-        <Text style={styles.txtmsgbody}>
-          {
-            'Hell its been so long since we went out would you like to join tommorow !'
-          }
-        </Text>
+        <Text style={styles.txtmsgbody}>{decrypt_msg(item.message)}</Text>
       ) : type === 'image' ? (
         <Image source={{uri: ImageUrl}} style={styles.imagebody} />
       ) : type === 'video' ? (
@@ -125,24 +128,26 @@ export default function FinalChatManager({type, id}) {
         <>
           <Text style={styles.contactname}>Abhishek Tripathi</Text>
           <View style={styles.contactbtnscontainer}>
-            <TouchableOpacity style={{flex:1}}>
+            <TouchableOpacity style={{flex: 1}}>
               <Text style={styles.contactbtns}>Call</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={{flex:1}}>
+            <TouchableOpacity style={{flex: 1}}>
               <Text style={styles.contactbtns}>Save</Text>
             </TouchableOpacity>
           </View>
         </>
-      ) 
-      :
-      type==='audio'?
-      <>
-      <View style={{flexDirection:'row',alignItems:'center'}}>
-      <AntDesign name="play" style={styles.playiconAudio} />
-      </View>
-      <ProgressBar progress={0.7698521589} color={Colors.red800} style={{height:10,paddingHorizontal:5,alignSelf:'center'}} />
-      </>
-      : null}
+      ) : type === 'audio' ? (
+        <>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <AntDesign name="play" style={styles.playiconAudio} />
+          </View>
+          <ProgressBar
+            progress={0.7698521589}
+            color={Colors.red800}
+            style={{height: 10, paddingHorizontal: 5, alignSelf: 'center'}}
+          />
+        </>
+      ) : null}
     </>
   );
 }

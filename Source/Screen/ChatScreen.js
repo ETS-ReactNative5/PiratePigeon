@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useRef, useState} from 'react';
 import {
   Dimensions,
   Image,
@@ -8,20 +8,80 @@ import {
   Text,
   View,
   TextInput,
+  TouchableOpacity,
+  FlatList,
 } from 'react-native';
 
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {useSelector, useDispatch} from 'react-redux';
+import CryptoJS from 'react-native-crypto-js';
+import database from '@react-native-firebase/database';
+import moment from 'moment';
 
 import Color from '../Constant/Color';
 import Constant from '../Constant/Constant';
 import ChatManager from '../Component/ChatManager';
 import AddSheet from '../Component/AddSheet';
+import FirebaseServices from '../Services/index';
 
-export default function ChatScreen() {
+export default function ChatScreen({navigation, route}) {
   const theme = useSelector(state => state.theme.theme);
+  const userData = useSelector(state => state.UserDataReducer.userData);
   const refRBSheet = useRef();
+  const flatlistRef = useRef();
+
+  const [textMessage, set_textMessage] = useState('');
+
+  const [messageList, setmessageList] = useState([]);
+
+  // console.log(route.params.friend_details);
+  // console.log(route.params.querySnapshot.key);
+
+  const send_buttonPressed = async () => {
+    if (textMessage != '') {
+      let ciphertext = CryptoJS.AES.encrypt(
+        textMessage,
+        route.params.querySnapshot.key,
+      ).toString();
+      sendtext_firebase(ciphertext);
+    }
+  };
+
+  const sendtext_firebase = async ciphertext => {
+    const chatRef = database()
+      .ref('Chat')
+      .child(`${route.params.querySnapshot.room_id}`);
+    const chat = {
+      message: ciphertext,
+      time: moment().format('DD-MM-YYYY HH:MM:SS A').toString(),
+      from: userData.user_id,
+      type: 'message',
+    };
+    FirebaseServices.update_last_msg(
+      userData.user_id,
+      route.params.querySnapshot.friend_id,
+      'message',
+      textMessage,
+    );
+    chatRef.push(chat);
+    set_textMessage('');
+  };
+
+  React.useEffect(() => {
+    database()
+      .ref('Chat')
+      .child(`${route.params.querySnapshot.room_id}`)
+      .on('value', snapshot => {
+        snapshot.forEach(snap => {
+          let messageList = [];
+          snapshot.forEach((snap) => {
+            messageList.push(snap.val());
+          });
+          setmessageList(messageList);
+        });
+      });
+  }, []);
 
   const styles = StyleSheet.create({
     mainframe: {
@@ -79,30 +139,34 @@ export default function ChatScreen() {
       <View style={styles.header}>
         <AntDesign name="arrowleft" style={styles.backicon} />
         <View style={{flex: 1, justifyContent: 'center'}}>
-          <Text style={styles.username}>Abhishek Tripathi</Text>
-          <Text style={styles.lastseen}>Last Seen at 09:52 AM</Text>
+          <Text style={styles.username}>
+            {route.params.friend_details.full_Name}
+          </Text>
+          {/* <Text style={styles.lastseen}>Last Seen at 09:52 AM</Text> */}
         </View>
-        <Image source={Constant.User} style={styles.listProfileImage} />
+        <Image
+          source={
+            route.params.friend_details.pphoto
+              ? {uri: route.params.friend_details.pphoto}
+              : Constant.User
+          }
+          style={styles.listProfileImage}
+        />
       </View>
-      <ScrollView style={styles.msgbody}>
-        <ChatManager id={1} type='image'/>
-        <ChatManager id={2} type='image'/>
-        <ChatManager id={1} type='video'/>
-        <ChatManager id={2} type='video'/>
-        {/* <ChatManager id={1} type='pdf'/>
-        <ChatManager id={2} type='pdf'/>
-        <ChatManager id={1} type='txt'/>
-        <ChatManager id={2} type='txt'/> */}
-        <ChatManager id={1} type='audio'/>
-        <ChatManager id={2} type='audio'/>
-        <ChatManager id={1} type='location'/>
-        <ChatManager id={2} type='location'/>
-        <ChatManager id={7} type='message'/>
-        <ChatManager id={8} type='contact'/>
-        <ChatManager id={9} type='contact'/>
-        <ChatManager id={9} type='message'/>
-        <ChatManager id={10} type='message'/>
-      </ScrollView>
+      <View style={styles.msgbody}>
+        <FlatList
+          ref={flatlistRef}
+          style={{flex:1}}
+          data={messageList}
+          keyExtractor={({item}) => {}}
+          onContentSizeChange={() =>
+            flatlistRef.current.scrollToEnd({animating: true})
+          }
+          renderItem={({item}) => (
+            <ChatManager id={userData.user_id===item.from?'2':1} type={item.type} item={item} en_key={route.params.querySnapshot.key} />
+          )}
+        />
+      </View>
       <View
         style={{backgroundColor: theme === 'light' ? '#e6e6e6' : '#272336'}}>
         <View style={styles.inputfieldcontainer}>
@@ -115,8 +179,12 @@ export default function ChatScreen() {
             placeholder="Messages...."
             style={{width: '78%'}}
             placeholderTextColor={theme === 'light' ? Color.dark : Color.light}
+            value={textMessage}
+            onChangeText={t => set_textMessage(t)}
           />
-          <FontAwesome name="send" style={styles.backicon} />
+          <TouchableOpacity onPress={() => send_buttonPressed()}>
+            <FontAwesome name="send" style={styles.backicon} />
+          </TouchableOpacity>
         </View>
       </View>
       <AddSheet refRBSheet={refRBSheet} />

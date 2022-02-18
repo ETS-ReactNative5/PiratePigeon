@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   Dimensions,
   Image,
@@ -12,6 +12,7 @@ import {
 import {useSelector, useDispatch} from 'react-redux';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {Searchbar} from 'react-native-paper';
+import firestore from '@react-native-firebase/firestore';
 
 import Color from '../Constant/Color';
 import Constant from '../Constant/Constant';
@@ -19,9 +20,44 @@ import HomeList from '../Component/HomeList';
 
 export default function HomeScreen({navigation}) {
   const theme = useSelector(state => state.theme.theme);
+  const userData = useSelector(state => state.UserDataReducer.userData);
 
   const [searchQuery, setSearchQuery] = React.useState('');
   const onChangeSearch = query => setSearchQuery(query);
+
+  const [home_chat_list, set_home_chat_list] = useState([]);
+
+  const fetch_home_list = async () => {
+    firestore()
+      .collection('HomeList')
+      .where('user_id', '==', userData.user_id)
+      .get()
+      .then(querySnapshot => {
+        if (querySnapshot.size !== 0) {
+          querySnapshot.forEach(documentSnapshot => {
+            firestore()
+              .collection('Users')
+              .where('user_id', '==', documentSnapshot.data().friend_id)
+              .get()
+              .then(querySnapshot2 => {
+                querySnapshot2.forEach(documentSnapshot2 => {
+                  let data = {
+                    room_data: documentSnapshot.data(),
+                    friend_data: documentSnapshot2.data(),
+                  };
+                  set_home_chat_list(oldArray => [...oldArray, data]);
+                });
+              });
+          });
+        } else {
+          // save_data_underfirebase(userData);
+        }
+      });
+  };
+
+  React.useEffect(() => {
+    fetch_home_list();
+  }, []);
 
   const styles = StyleSheet.create({
     mainframe: {
@@ -62,7 +98,11 @@ export default function HomeScreen({navigation}) {
       <View style={styles.headerContainer}>
         <FontAwesome name="bars" style={styles.editicon} />
         <Text style={styles.headingtxt}>Messages</Text>
-        <FontAwesome name="edit" style={styles.editicon} />
+        <FontAwesome
+          name="edit"
+          style={styles.editicon}
+          onPress={() => navigation.navigate('MyContacts')}
+        />
       </View>
       <ScrollView
         style={{backgroundColor: theme === 'light' ? Color.light : Color.dark}}>
@@ -72,22 +112,23 @@ export default function HomeScreen({navigation}) {
           value={searchQuery}
           style={styles.searchbar}
         />
-        <HomeList navigation={()=>navigation.navigate('ChatScreen')}/>
-        <HomeList navigation={()=>navigation.navigate('ChatScreen')}/>
-        <HomeList navigation={()=>navigation.navigate('ChatScreen')}/>
-        <HomeList navigation={()=>navigation.navigate('ChatScreen')}/>
-        <HomeList navigation={()=>navigation.navigate('ChatScreen')}/>
-        <HomeList navigation={()=>navigation.navigate('ChatScreen')}/>
-        <HomeList navigation={()=>navigation.navigate('ChatScreen')}/>
-        <HomeList navigation={()=>navigation.navigate('ChatScreen')}/>
-        <HomeList navigation={()=>navigation.navigate('ChatScreen')}/>
-        <HomeList navigation={()=>navigation.navigate('ChatScreen')}/>
-        <HomeList navigation={()=>navigation.navigate('ChatScreen')}/>
-        <HomeList navigation={()=>navigation.navigate('ChatScreen')}/>
-        <HomeList navigation={()=>navigation.navigate('ChatScreen')}/>
-        <HomeList navigation={()=>navigation.navigate('ChatScreen')}/>
-        <HomeList navigation={()=>navigation.navigate('ChatScreen')}/>
-        <HomeList navigation={()=>navigation.navigate('ChatScreen')}/>
+        {home_chat_list.map((item, index) => {
+          return (
+            <HomeList
+              pphoto={item.friend_data.pphoto}
+              full_Name={item.friend_data.full_Name}
+              last_msg={item.room_data.last_msg}
+              last_msg_time={item.room_data.last_msg_time}
+              navigation={() =>
+                navigation.navigate('ChatScreen', {
+                  querySnapshot: item.room_data,
+                  type: 'self',
+                  friend_details: item.friend_data,
+                })
+              }
+            />
+          );
+        })}
       </ScrollView>
     </SafeAreaView>
   );

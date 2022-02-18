@@ -12,13 +12,74 @@ import {
 import {useSelector, useDispatch} from 'react-redux';
 import {TextInput} from 'react-native-paper';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import firestore from '@react-native-firebase/firestore';
 
 import Color from '../Constant/Color';
 import Constant from '../Constant/Constant';
+import UserDataAction from '../Redux/Action/UserDataAction';
 
-export default function EditProfieScreen({navigation}) {
+export default function EditProfieScreen({navigation, route}) {
   const theme = useSelector(state => state.theme.theme);
-  const [text, setText] = React.useState('');
+  const dispatch = useDispatch();
+
+  const [userName, setUserName] = React.useState(
+    route?.params?.userData?.full_Name,
+  );
+  const [email, setEmail] = React.useState(route?.params?.userData?.email);
+  const [pphoto, setPphoto] = React.useState(
+    route.params.userData.pphoto === null
+      ? Constant.User
+      : route.params.userData.pphoto,
+  );
+
+  const navigate_user_data_handle = async () => {
+    let userData = {
+      full_Name: userName,
+      email: email,
+      pphoto: pphoto,
+      user_id: route.params.userData.user_id,
+    };
+    await AsyncStorage.setItem('userData', JSON.stringify(userData));
+    find_user_exist(userData);
+  };
+
+  const find_user_exist = async userData => {
+    firestore()
+      .collection('Users')
+      .where('email', '==', email)
+      .get()
+      .then(querySnapshot => {
+        if (querySnapshot.size === 1) {
+          querySnapshot.forEach(documentSnapshot => {
+            update_user_data_firebase(userData,documentSnapshot.id);
+          });
+        } else {
+          save_data_underfirebase(userData);
+        }
+      });
+  };
+  const save_data_underfirebase = async userData => {
+    firestore()
+      .collection('Users')
+      .add(userData)
+      .then(() => {
+        console.log('User data saved!');
+        dispatch(UserDataAction(userData));
+        navigation.navigate('HomeScreen');
+      });
+  };
+  const update_user_data_firebase = async (userData,doc_id) => {
+    firestore()
+      .collection('Users')
+      .doc(doc_id)
+      .update(userData)
+      .then(() => {
+        console.log('User updated!');
+        dispatch(UserDataAction(userData));
+        navigation.navigate('HomeScreen');
+      });
+  };
 
   const styles = StyleSheet.create({
     mainFrame: {
@@ -101,35 +162,34 @@ export default function EditProfieScreen({navigation}) {
         <Text style={styles.savetxt}>Save</Text>
       </View>
       <View>
-        <Image source={Constant.User} style={styles.userProfile} />
-        <AntDesign name="camerao" style={styles.cameraLogo} />
+        <Image source={{uri: pphoto}} style={styles.userProfile} />
+        {/* <AntDesign name="camerao" style={styles.cameraLogo} /> */}
       </View>
       <View style={styles.body}>
         <TextInput
           label="User Name"
           mode="outlined"
-          value={text}
-          onChangeText={text => setText(text)}
+          value={userName}
+          onChangeText={text => setUserName(text)}
           style={[styles.inputFields, {marginTop: 25}]}
           placeholderTextColor={Color.light}
+          outlineColor="red"
+          activeOutlineColor="red"
         />
         <TextInput
           label="Email Address"
           mode="outlined"
-          value={text}
-          onChangeText={text => setText(text)}
+          value={email}
+          onChangeText={text => setEmail(text)}
           style={styles.inputFields}
           placeholderTextColor={Color.light}
+          outlineColor="red"
+          activeOutlineColor="red"
+          disabled={true}
         />
-        <TextInput
-          label="Phone Number"
-          mode="outlined"
-          value={text}
-          onChangeText={text => setText(text)}
-          placeholderTextColor={Color.light}
-          style={styles.inputFields}
-        />
-        <TouchableOpacity style={styles.btn} onPress={()=>navigation.navigate('HomeScreen')}>
+        <TouchableOpacity
+          style={styles.btn}
+          onPress={() => navigate_user_data_handle()}>
           <Text style={styles.btntxt}>Continue</Text>
         </TouchableOpacity>
       </View>

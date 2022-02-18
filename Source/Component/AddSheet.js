@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import RBSheet from 'react-native-raw-bottom-sheet';
 import { useSelector, useDispatch } from 'react-redux';
@@ -13,6 +13,11 @@ import ChatManager from '../Component/ChatManager';
 
 export default function AddSheet({ refRBSheet }) {
   const theme = useSelector(state => state.theme.theme);
+
+  const feature_update = async () => {
+    alert("Feature Update Inprogress !");
+  }
+
   const styles = StyleSheet.create({
     mainframe: {
       flex: 1,
@@ -51,32 +56,32 @@ export default function AddSheet({ refRBSheet }) {
     >
       <View style={styles.mainframe}>
         <View style={styles.rowcontainer}>
-          <View style={styles.seperator}>
+          <TouchableOpacity style={styles.seperator} onPress={feature_update}>
             <MaterialCommunityIcons name='file-document' style={styles.icon} />
             <Text style={styles.icondesctext}>Document</Text>
-          </View>
-          <View style={styles.seperator}>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.seperator}  onPress={feature_update}>
             <MaterialCommunityIcons name='camera' style={styles.icon} />
             <Text style={styles.icondesctext}>Camera</Text>
-          </View>
-          <View style={styles.seperator}>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.seperator}  onPress={feature_update}>
             <AntDesign name='picture' style={styles.icon} />
             <Text style={styles.icondesctext}>Gallery</Text>
-          </View>
+          </TouchableOpacity>
         </View>
         <View style={styles.rowcontainer}>
-          <View style={styles.seperator}>
+          <TouchableOpacity style={styles.seperator}  onPress={feature_update}>
             <MaterialIcons name='audiotrack' style={styles.icon} />
             <Text style={styles.icondesctext}>Audio</Text>
-          </View>
-          <View style={styles.seperator}>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.seperator}  onPress={feature_update}>
             <AntDesign name='enviroment' style={styles.icon} />
             <Text style={styles.icondesctext}>Location</Text>
-          </View>
-          <View style={styles.seperator}>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.seperator}  onPress={feature_update}>
             <MaterialCommunityIcons name='contacts' style={styles.icon} />
             <Text style={styles.icondesctext}>Contact</Text>
-          </View>
+          </TouchableOpacity>
         </View>
       </View>
     </RBSheet>

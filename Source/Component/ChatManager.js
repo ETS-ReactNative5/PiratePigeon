@@ -8,13 +8,23 @@ import Color from '../Constant/Color';
 import Constant from '../Constant/Constant';
 import FinalChatManager from './FinalChatManager';
 
-export default function ChatManager({id,type}) {
+export default function ChatManager({id,type,item,en_key}) {
   const theme = useSelector(state => state.theme.theme);
 
   const convertTime = time => {
-    let result = moment(time).format('HH:MM A' + '   ' + 'DD/MM/YYYY');
+    let result = item.time
+    ? moment(item.time, 'DD-MM-YYYY HH:MM:SS A').format(
+        'DD-MM-YYYY',
+      ) === moment().format('DD-MM-YYYY')
+      ? moment(item.time, 'DD-MM-YYYY HH:MM:SS A').format('HH:MM A')
+      : moment(item.time, 'DD-MM-YYYY HH:MM:SS A').format(
+          'DD-MM-YYYY',
+        )
+    : '';
     return result;
   };
+
+  console.log(en_key);
 
   const styles = StyleSheet.create({
     mainFrame: {
@@ -42,8 +52,8 @@ export default function ChatManager({id,type}) {
   return (
     <View style={styles.mainFrame}>
       <View style={{flexDirection: 'column', padding: 2, flex: 1}}>
-        <FinalChatManager type={type} id={id}/>
-        <Text style={styles.timedisplaytext}>{convertTime(new Date())}</Text>
+        <FinalChatManager type={type} id={id}  item={item} en_key={en_key} />
+        <Text style={styles.timedisplaytext}>{convertTime()}</Text>
       </View>
     </View>
   );

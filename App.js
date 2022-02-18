@@ -17,6 +17,7 @@ import GoogleSignUpScreen from './Source/Screen/GoogleSignInScreen';
 import HomeScreen from './Source/Screen/HomeScreen';
 import ChatScreens from './Source/Screen/ChatScreen';
 import EditProfieScreen from './Source/Screen/EditProfieScreen';
+import MyContacts from './Source/Screen/MyContacts';
 
 
 const Stack = createStackNavigator();
@@ -46,11 +47,12 @@ const App = () => {
   React.useEffect(() => {                       //PUSH NOTIFICATION AND TOKEN GENRATE
     PushNotification.configure({
       onRegister: function (token) {
-        save_notification_token(token.token)
+        save_notification_token(token.token);
+        console.log(token.token);
       },
       onNotification: function (notification) {
         // console.log("NOTIFICATION 1 : ", notification.data.link);
-        Linking.openURL(notification.data.link)
+        // Linking.openURL(notification.data.link)
 
       },
       onAction: function (notification) {
@@ -70,18 +72,6 @@ const App = () => {
     });
   },[]);
 
-  React.useEffect(()=>{
-    Geolocation.getCurrentPosition(
-      (position) => {
-        console.log(position);
-      },
-      (error) => {
-        // See error code charts below.
-        console.log(error.code, error.message);
-      },
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-  );
-  },[]);
 
   return (
     <>
@@ -99,6 +89,7 @@ const App = () => {
           <Stack.Screen name="HomeScreen" component={HomeScreen} />
           <Stack.Screen name="ChatScreen" component={ChatScreens} />
           <Stack.Screen name="EditProfieScreen" component={EditProfieScreen} />
+          <Stack.Screen name="MyContacts" component={MyContacts} />
 
         </Stack.Navigator>
       </NavigationContainer>

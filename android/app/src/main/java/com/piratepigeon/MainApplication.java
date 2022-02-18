@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Arrays;
 import com.facebook.react.shell.MainReactPackage;
 
+import com.rt2zz.reactnativecontacts.ReactNativeContacts;
+
 public class MainApplication extends Application implements ReactApplication {
 
   private final ReactNativeHost mReactNativeHost =

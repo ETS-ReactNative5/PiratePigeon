@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 
 import {useSelector, useDispatch} from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Color from '../Constant/Color';
 import Constant from '../Constant/Constant';
@@ -22,7 +23,19 @@ export default function GoogleSignInScreen({navigation}) {
 
   const changeTheme = async theme => {
     dispatch(ThemeAction(String(theme)));
+    await AsyncStorage.setItem('theme',theme);
   };
+
+  const getDefaultTheme = async () => {
+    let value = await AsyncStorage.getItem('theme');
+    if(value !== null) {
+      changeTheme(value);
+    }
+  }
+
+  React.useEffect(() => {
+    getDefaultTheme();
+  }, []);
 
   const styles = StyleSheet.create({
     mainframe: {
@@ -89,7 +102,7 @@ export default function GoogleSignInScreen({navigation}) {
 
 
   const _google_sign_in = () => {
-    GoogleServices._sign();
+    GoogleServices._sign(navigation);
   }
 
   return (

@@ -1,4 +1,3 @@
-import moment from 'moment';
 import React from 'react';
 import {
   StyleSheet,
@@ -7,6 +6,7 @@ import {
   Image,
   Dimensions,
   TouchableOpacity,
+  PermissionsAndroid,
 } from 'react-native';
 
 import {useSelector, useDispatch} from 'react-redux';
@@ -14,14 +14,9 @@ import {useSelector, useDispatch} from 'react-redux';
 import Color from '../Constant/Color';
 import Constant from '../Constant/Constant';
 
-export default function HomeList({
-  navigation,
-  pphoto,
-  full_Name,
-  last_msg,
-  last_msg_time,
-}) {
+export default function ContactList({navigation, user_id, full_Name, pphoto}) {
   const theme = useSelector(state => state.theme.theme);
+
   const styles = StyleSheet.create({
     listcontainer: {
       backgroundColor: theme === 'light' ? '#e6e6e6' : Color.secondary,
@@ -46,6 +41,7 @@ export default function HomeList({
       fontSize: 16,
       fontWeight: '700',
       color: theme === 'light' ? Color.dark : Color.light,
+      justifyContent: 'center',
     },
     msgtxt: {
       fontSize: 13,
@@ -68,31 +64,11 @@ export default function HomeList({
   });
   return (
     <TouchableOpacity style={styles.listcontainer} onPress={navigation}>
-      <Image
-        source={pphoto ? {uri: pphoto} : Constant.User}
-        style={styles.listProfileImage}
-      />
+      <Image source={pphoto?{uri:pphoto}:Constant.User} style={styles.listProfileImage} />
       <View style={styles.listbody}>
         <Text style={styles.username} numberOfLines={1}>
-          {full_Name ? full_Name : ''}
+          {full_Name?full_Name:''}
         </Text>
-        <Text style={styles.msgtxt} numberOfLines={1}>
-          {last_msg ? last_msg : ''}
-        </Text>
-      </View>
-      <View style={{marginHorizontal: 5, justifyContent: 'center'}}>
-        <Text style={styles.timetxt}>
-          {last_msg_time
-            ? moment(last_msg_time, 'DD-MM-YYYY HH:MM:SS A').format(
-                'DD-MM-YYYY',
-              ) === moment().format('DD-MM-YYYY')
-              ? moment(last_msg_time, 'DD-MM-YYYY HH:MM:SS A').format('HH:MM A')
-              : moment(last_msg_time, 'DD-MM-YYYY HH:MM:SS A').format(
-                  'DD-MM-YYYY',
-                )
-            : ''}
-        </Text>
-        <View style={styles.ismsgboxindicator} />
       </View>
     </TouchableOpacity>
   );
