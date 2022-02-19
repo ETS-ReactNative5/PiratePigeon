@@ -56,8 +56,8 @@ export default function FinalChatManager({type, id, item, en_key}) {
       fontSize: 15,
     },
     imagebody: {
-      height: Math.round(((dimensions.width / 1.35) * 9) / 16),
-      width: dimensions.width / 1.35,
+      height: item.image_height<item.image_width?Math.round(((dimensions.width / 1.35) * 9) / 16):dimensions.width / 1.35,
+      width: item.image_height<item.image_width?Math.round(((dimensions.width / 1.35) * 9) / 16):dimensions.width / 1.35,
       padding: 5,
       borderBottomRightRadius: 20,
       borderBottomLeftRadius: 20,
@@ -109,7 +109,7 @@ export default function FinalChatManager({type, id, item, en_key}) {
       {type === 'message' ? (
         <Text style={styles.txtmsgbody}>{decrypt_msg(item.message)}</Text>
       ) : type === 'image' ? (
-        <Image source={{uri: ImageUrl}} style={styles.imagebody} />
+        <Image source={{uri: item.link}} style={styles.imagebody} />
       ) : type === 'video' ? (
         <View>
           <Image source={{uri: ImageUrl}} style={styles.imagebody} />

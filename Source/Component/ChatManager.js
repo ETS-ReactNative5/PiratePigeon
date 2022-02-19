@@ -24,8 +24,6 @@ export default function ChatManager({id,type,item,en_key}) {
     return result;
   };
 
-  console.log(en_key);
-
   const styles = StyleSheet.create({
     mainFrame: {
       marginBottom: 10,

@@ -1,16 +1,21 @@
 import firestore from '@react-native-firebase/firestore';
 import axios from 'axios';
-import moment from 'moment';
+import moment, {now} from 'moment';
+import storage from '@react-native-firebase/storage';
+import database from '@react-native-firebase/database';
+import {useSelector, useDispatch} from 'react-redux';
+
+import Constant from '../Constant/Constant';
 
 const update_last_msg = async (user_id, friend_id, type, message) => {
-      firestore()
-    .collection('Users')
+  firestore()
+    .collection('HomeList')
     .where('user_id', '==', user_id)
     .get()
     .then(querySnapshot => {
       querySnapshot.forEach(documentSnapshot => {
         firestore()
-          .collection('Users')
+          .collection('HomeList')
           .doc(documentSnapshot.id)
           .update({
             last_msg:
@@ -23,14 +28,19 @@ const update_last_msg = async (user_id, friend_id, type, message) => {
       });
     });
   firestore()
-    .collection('Users')
+    .collection('HomeList')
     .where('user_id', '==', friend_id)
     .get()
     .then(querySnapshot => {
       querySnapshot.forEach(documentSnapshot => {
-        push_notification(documentSnapshot.data().token,documentSnapshot.data().full_Name,message,type);
+        push_notification(
+          documentSnapshot.data().token,
+          documentSnapshot.data().full_Name,
+          message,
+          type,
+        );
         firestore()
-          .collection('Users')
+          .collection('HomeList')
           .doc(documentSnapshot.id)
           .update({
             last_msg:
@@ -44,7 +54,7 @@ const update_last_msg = async (user_id, friend_id, type, message) => {
     });
 };
 
-const push_notification = async (token,full_Name,message,type) => {
+const push_notification = async (token, full_Name, message, type) => {
   var axios = require('axios');
   var data = JSON.stringify({
     to: String(token),
@@ -92,4 +102,55 @@ const push_notification = async (token,full_Name,message,type) => {
     });
 };
 
-export default {update_last_msg};
+const image_upload_firebase = async (
+  image,
+  current_room_id,
+  friend_id,
+  userData,
+) => {
+  let refernce_image = `image/${Date.now()}${
+    image.path.split(Constant.app_file_locaton)[1]
+  }`;
+  let reference = storage().ref(refernce_image);
+  let task = reference.putFile(image.path);
+  task
+    .then(() => {
+      _image_link_genrator(
+        image,
+        current_room_id,
+        refernce_image,
+        friend_id,
+        userData,
+      );
+    })
+    .catch(e => console.log('uploading image error => ', e));
+};
+
+const _image_link_genrator = async (
+  image,
+  current_room_id,
+  refernce_image,
+  friend_id,
+  userData,
+) => {
+  const url = await storage().ref(refernce_image).getDownloadURL();
+
+  const chatRef = database().ref('Chat').child(`${current_room_id}`);
+  const data = {
+    time: moment().format('DD-MM-YYYY HH:MM:SS A').toString(),
+    from: userData.user_id,
+    type: 'image',
+    link: url,
+    image_height: image.height,
+    image_width: image.width,
+    size: image.size,
+  };
+  update_last_msg(userData.user_id, friend_id, 'image', '');
+  chatRef.push(data);
+};
+
+const _update_fmc_token = async (token) => {
+  console.log(token);
+}
+
+export default {update_last_msg, image_upload_firebase,_update_fmc_token};

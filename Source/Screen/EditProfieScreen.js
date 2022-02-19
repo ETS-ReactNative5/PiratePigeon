@@ -39,6 +39,9 @@ export default function EditProfieScreen({navigation, route}) {
       email: email,
       pphoto: pphoto,
       user_id: route.params.userData.user_id,
+      token: await AsyncStorage.getItem('fmctoken'),
+      ip: await AsyncStorage.getItem('ip'),
+      uniqueId: await AsyncStorage.getItem('uniqueId'),
     };
     await AsyncStorage.setItem('userData', JSON.stringify(userData));
     find_user_exist(userData);

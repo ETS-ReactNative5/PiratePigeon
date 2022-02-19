@@ -17,10 +17,14 @@ import firestore from '@react-native-firebase/firestore';
 import Color from '../Constant/Color';
 import Constant from '../Constant/Constant';
 import HomeList from '../Component/HomeList';
+import AppDrawer from '../Component/AppDrawer';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 export default function HomeScreen({navigation}) {
   const theme = useSelector(state => state.theme.theme);
   const userData = useSelector(state => state.UserDataReducer.userData);
+
+  const [drawer_modal,set_drawer_modal] = useState(false);
 
   const [searchQuery, setSearchQuery] = React.useState('');
   const onChangeSearch = query => setSearchQuery(query);
@@ -96,7 +100,9 @@ export default function HomeScreen({navigation}) {
   return (
     <SafeAreaView>
       <View style={styles.headerContainer}>
-        <FontAwesome name="bars" style={styles.editicon} />
+        <TouchableOpacity onPress={()=>set_drawer_modal(!drawer_modal)}>
+          <FontAwesome name="bars" style={styles.editicon} />
+        </TouchableOpacity>
         <Text style={styles.headingtxt}>Messages</Text>
         <FontAwesome
           name="edit"
@@ -130,6 +136,7 @@ export default function HomeScreen({navigation}) {
           );
         })}
       </ScrollView>
+      <AppDrawer modalVisible={drawer_modal} onDrawerToggle={()=>set_drawer_modal(!drawer_modal)} />
     </SafeAreaView>
   );
 }

@@ -18,6 +18,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import CryptoJS from 'react-native-crypto-js';
 import database from '@react-native-firebase/database';
 import moment from 'moment';
+import {Menu, MenuItem, MenuDivider} from 'react-native-material-menu';
 
 import Color from '../Constant/Color';
 import Constant from '../Constant/Constant';
@@ -32,8 +33,10 @@ export default function ChatScreen({navigation, route}) {
   const flatlistRef = useRef();
 
   const [textMessage, set_textMessage] = useState('');
-
   const [messageList, setmessageList] = useState([]);
+  const [visible, setVisible] = useState(false);
+  const hideMenu = () => setVisible(false);
+  const showMenu = () => setVisible(true);
 
   // console.log(route.params.friend_details);
   // console.log(route.params.querySnapshot.key);
@@ -75,7 +78,7 @@ export default function ChatScreen({navigation, route}) {
       .on('value', snapshot => {
         snapshot.forEach(snap => {
           let messageList = [];
-          snapshot.forEach((snap) => {
+          snapshot.forEach(snap => {
             messageList.push(snap.val());
           });
           setmessageList(messageList);
@@ -144,26 +147,45 @@ export default function ChatScreen({navigation, route}) {
           </Text>
           {/* <Text style={styles.lastseen}>Last Seen at 09:52 AM</Text> */}
         </View>
-        <Image
-          source={
-            route.params.friend_details.pphoto
-              ? {uri: route.params.friend_details.pphoto}
-              : Constant.User
+
+        <Menu
+          visible={visible}
+          anchor={
+            <TouchableOpacity onPress={showMenu}>
+              <Image
+                source={
+                  route.params.friend_details.pphoto
+                    ? {uri: route.params.friend_details.pphoto}
+                    : Constant.User
+                }
+                style={styles.listProfileImage}
+              />
+            </TouchableOpacity>
           }
-          style={styles.listProfileImage}
-        />
+          onRequestClose={hideMenu}>
+          <MenuItem onPress={hideMenu}>View Profile</MenuItem>
+          <MenuDivider />
+          <MenuItem onPress={hideMenu}>Block User</MenuItem>
+          <MenuDivider />
+          <MenuItem onPress={hideMenu}>Close</MenuItem>
+        </Menu>
       </View>
       <View style={styles.msgbody}>
         <FlatList
           ref={flatlistRef}
-          style={{flex:1}}
+          style={{flex: 1}}
           data={messageList}
           keyExtractor={({item}) => {}}
           onContentSizeChange={() =>
             flatlistRef.current.scrollToEnd({animating: true})
           }
           renderItem={({item}) => (
-            <ChatManager id={userData.user_id===item.from?'2':1} type={item.type} item={item} en_key={route.params.querySnapshot.key} />
+            <ChatManager
+              id={userData.user_id === item.from ? '2' : 1}
+              type={item.type}
+              item={item}
+              en_key={route.params.querySnapshot.key}
+            />
           )}
         />
       </View>
@@ -177,17 +199,27 @@ export default function ChatScreen({navigation, route}) {
           />
           <TextInput
             placeholder="Messages...."
-            style={{width: '78%'}}
+            style={{
+              width: '78%',
+              color: theme === 'light' ? Color.dark : Color.light,
+            }}
             placeholderTextColor={theme === 'light' ? Color.dark : Color.light}
             value={textMessage}
             onChangeText={t => set_textMessage(t)}
           />
-          <TouchableOpacity onPress={() => send_buttonPressed()}>
+          <TouchableOpacity
+            style={{justifyContent: 'center'}}
+            onPress={() => send_buttonPressed()}>
             <FontAwesome name="send" style={styles.backicon} />
           </TouchableOpacity>
         </View>
       </View>
-      <AddSheet refRBSheet={refRBSheet} />
+      <AddSheet
+        refRBSheet={refRBSheet}
+        current_room_id={route.params.querySnapshot.room_id}
+        friend_id={route.params.querySnapshot.friend_id}
+        userData={userData}
+      />
     </SafeAreaView>
   );
 }

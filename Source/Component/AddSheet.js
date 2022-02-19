@@ -1,22 +1,43 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
 import RBSheet from 'react-native-raw-bottom-sheet';
-import { useSelector, useDispatch } from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import ImagePicker from 'react-native-image-crop-picker';
 
 import Color from '../Constant/Color';
 import Constant from '../Constant/Constant';
 import ChatManager from '../Component/ChatManager';
+import FirebaseServices from '../Services/index';
 
-export default function AddSheet({ refRBSheet }) {
+export default function AddSheet({
+  refRBSheet,
+  current_room_id,
+  friend_id,
+  userData,
+}) {
   const theme = useSelector(state => state.theme.theme);
 
   const feature_update = async () => {
-    alert("Feature Update Inprogress !");
-  }
+    alert('Feature Update Inprogress !');
+  };
+
+  const ImageUploadGallery = async () => {
+    ImagePicker.openPicker({
+      cropping: true,
+      multiple: false,
+    }).then(image => {
+      FirebaseServices.image_upload_firebase(
+        image,
+        current_room_id,
+        friend_id,
+        userData,
+      );
+    });
+  };
 
   const styles = StyleSheet.create({
     mainframe: {
@@ -39,7 +60,7 @@ export default function AddSheet({ refRBSheet }) {
     seperator: {
       flex: 1,
       flexDirection: 'column',
-      justifyContent:'center',
+      justifyContent: 'center',
     },
     icondesctext: {
       fontSize: 15,
@@ -52,34 +73,35 @@ export default function AddSheet({ refRBSheet }) {
       ref={refRBSheet}
       closeOnDragDown={true}
       closeOnPressMask={true}
-      myCustomStyleProp={styles.bottomsheetstylescustom}
-    >
+      myCustomStyleProp={styles.bottomsheetstylescustom}>
       <View style={styles.mainframe}>
         <View style={styles.rowcontainer}>
           <TouchableOpacity style={styles.seperator} onPress={feature_update}>
-            <MaterialCommunityIcons name='file-document' style={styles.icon} />
+            <MaterialCommunityIcons name="file-document" style={styles.icon} />
             <Text style={styles.icondesctext}>Document</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.seperator}  onPress={feature_update}>
-            <MaterialCommunityIcons name='camera' style={styles.icon} />
+          <TouchableOpacity style={styles.seperator} onPress={feature_update}>
+            <MaterialCommunityIcons name="camera" style={styles.icon} />
             <Text style={styles.icondesctext}>Camera</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.seperator}  onPress={feature_update}>
-            <AntDesign name='picture' style={styles.icon} />
+          <TouchableOpacity
+            style={styles.seperator}
+            onPress={() => ImageUploadGallery()}>
+            <AntDesign name="picture" style={styles.icon} />
             <Text style={styles.icondesctext}>Gallery</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.rowcontainer}>
-          <TouchableOpacity style={styles.seperator}  onPress={feature_update}>
-            <MaterialIcons name='audiotrack' style={styles.icon} />
+          <TouchableOpacity style={styles.seperator} onPress={feature_update}>
+            <MaterialIcons name="audiotrack" style={styles.icon} />
             <Text style={styles.icondesctext}>Audio</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.seperator}  onPress={feature_update}>
-            <AntDesign name='enviroment' style={styles.icon} />
+          <TouchableOpacity style={styles.seperator} onPress={feature_update}>
+            <AntDesign name="enviroment" style={styles.icon} />
             <Text style={styles.icondesctext}>Location</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.seperator}  onPress={feature_update}>
-            <MaterialCommunityIcons name='contacts' style={styles.icon} />
+          <TouchableOpacity style={styles.seperator} onPress={feature_update}>
+            <MaterialCommunityIcons name="contacts" style={styles.icon} />
             <Text style={styles.icondesctext}>Contact</Text>
           </TouchableOpacity>
         </View>
