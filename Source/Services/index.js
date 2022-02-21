@@ -19,7 +19,13 @@ const update_last_msg = async (user_id, friend_id, type, message) => {
           .doc(documentSnapshot.id)
           .update({
             last_msg:
-              type === 'message' ? message : type === 'image' ? 'Photo' : '',
+              type === 'message'
+                ? message
+                : type === 'image'
+                ? 'Photo'
+                : type === 'pdf'
+                ? 'PDF'
+                : '',
             last_msg_time: moment().format('DD-MM-YYYY HH:MM:SS A').toString(),
           })
           .then(() => {
@@ -44,7 +50,13 @@ const update_last_msg = async (user_id, friend_id, type, message) => {
           .doc(documentSnapshot.id)
           .update({
             last_msg:
-              type === 'message' ? message : type === 'image' ? 'Photo' : '',
+              type === 'message'
+                ? message
+                : type === 'image'
+                ? 'Photo'
+                : type === 'pdf'
+                ? 'PDF'
+                : '',
             last_msg_time: moment().format('DD-MM-YYYY HH:MM:SS A').toString(),
           })
           .then(() => {
@@ -75,7 +87,14 @@ const push_notification = async (token, full_Name, message, type) => {
     notification: {
       sound: 'default',
       playSound: true,
-      body: type === 'message' ? message : type === 'image' ? 'Photo' : '',
+      body:
+        type === 'message'
+          ? message
+          : type === 'image'
+          ? 'Photo'
+          : type === 'pdf'
+          ? 'PDF'
+          : '',
       title: full_Name,
       content_available: true,
       priority: 'high',
@@ -107,10 +126,12 @@ const image_upload_firebase = async (
   current_room_id,
   friend_id,
   userData,
+  refRBSheet,
 ) => {
   let refernce_image = `image/${Date.now()}${
     image.path.split(Constant.app_file_locaton)[1]
   }`;
+
   let reference = storage().ref(refernce_image);
   let task = reference.putFile(image.path);
   task
@@ -121,6 +142,7 @@ const image_upload_firebase = async (
         refernce_image,
         friend_id,
         userData,
+        refRBSheet,
       );
     })
     .catch(e => console.log('uploading image error => ', e));
@@ -132,6 +154,7 @@ const _image_link_genrator = async (
   refernce_image,
   friend_id,
   userData,
+  refRBSheet,
 ) => {
   const url = await storage().ref(refernce_image).getDownloadURL();
 
@@ -147,10 +170,87 @@ const _image_link_genrator = async (
   };
   update_last_msg(userData.user_id, friend_id, 'image', '');
   chatRef.push(data);
+  refRBSheet.current.close();
 };
 
-const _update_fmc_token = async (token) => {
+const _update_fmc_token = async token => {
   console.log(token);
-}
+};
 
-export default {update_last_msg, image_upload_firebase,_update_fmc_token};
+const _fireebase_document_upload = async (
+  document,
+  current_room_id,
+  friend_id,
+  userData,
+  refRBSheet,
+  doc_type,
+) => {
+  let refernce_document = `doc/${Date.now()}${document.uri}`;
+
+  let reference = storage().ref(refernce_document);
+  let task = reference.putFile(document.uri);
+  task
+    .then(() => {
+      _doc_link_genrator(
+        document,
+        current_room_id,
+        refernce_document,
+        friend_id,
+        userData,
+        refRBSheet,
+      );
+    })
+    .catch(e => console.log('uploading image error => ', e));
+};
+
+const _doc_link_genrator = async (
+  document,
+  current_room_id,
+  refernce_document,
+  friend_id,
+  userData,
+  refRBSheet,
+) => {
+  const url = await storage().ref(refernce_document).getDownloadURL();
+
+  const chatRef = database().ref('Chat').child(`${current_room_id}`);
+  const data = {
+    time: moment().format('DD-MM-YYYY HH:MM:SS A').toString(),
+    from: userData.user_id,
+    type: 'pdf',
+    link: url,
+    size: document.size,
+  };
+  update_last_msg(userData.user_id, friend_id, 'pdf', '');
+  chatRef.push(data);
+  refRBSheet.current.close();
+};
+
+const _update_user_last_seen = async (email, token) => {
+  firestore()
+    .collection('Users')
+    .where('email', '==', email)
+    .get()
+    .then(querySnapshot => {
+      querySnapshot.forEach(documentSnapshot => {
+        firestore()
+          .collection('Users')
+          .doc(documentSnapshot.id)
+          .update({
+            user_last_seen: moment().format('DD-MM-YYYY HH:MM:SS A').toString(),
+            token: token,
+          })
+          .then(() => {
+            console.log('Last Seen updated!');
+          });
+      });
+    });
+};
+
+export default {
+  update_last_msg,
+  image_upload_firebase,
+  _update_fmc_token,
+  _fireebase_document_upload,
+  _update_user_last_seen,
+};

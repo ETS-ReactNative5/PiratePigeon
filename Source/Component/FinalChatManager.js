@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {ProgressBar, Colors} from 'react-native-paper';
 import {useSelector, useDispatch} from 'react-redux';
 import CryptoJS from 'react-native-crypto-js';
@@ -16,7 +17,7 @@ import CryptoJS from 'react-native-crypto-js';
 import Color from '../Constant/Color';
 import Constant from '../Constant/Constant';
 
-export default function FinalChatManager({type, id, item, en_key}) {
+export default function FinalChatManager({type, id, item, en_key, navigation}) {
   const theme = useSelector(state => state.theme.theme);
   const [imagesdata, set_imagesdata] = useState({
     ImageWidth: 0,
@@ -32,7 +33,6 @@ export default function FinalChatManager({type, id, item, en_key}) {
         ImageUrl,
         (Width, Height) => {
           set_imagesdata({ImageWidth: Width, ImageHeight: Height});
-          console.log(Width, Height);
         },
         errorMsg => {
           console.log(errorMsg);
@@ -41,11 +41,11 @@ export default function FinalChatManager({type, id, item, en_key}) {
     }
   }, []);
 
-  const decrypt_msg = (msg) => {
-    let bytes  = CryptoJS.AES.decrypt(msg, en_key);
+  const decrypt_msg = msg => {
+    let bytes = CryptoJS.AES.decrypt(msg, en_key);
     let originalText = bytes.toString(CryptoJS.enc.Utf8);
     return originalText;
-  }
+  };
 
   const styles = StyleSheet.create({
     txtmsgbody: {
@@ -56,8 +56,14 @@ export default function FinalChatManager({type, id, item, en_key}) {
       fontSize: 15,
     },
     imagebody: {
-      height: item.image_height<item.image_width?Math.round(((dimensions.width / 1.35) * 9) / 16):dimensions.width / 1.35,
-      width: item.image_height<item.image_width?Math.round(((dimensions.width / 1.35) * 9) / 16):dimensions.width / 1.35,
+      height:
+        item.image_height < item.image_width
+          ? Math.round(((dimensions.width / 1.35) * 9) / 16)
+          : dimensions.width / 1.35,
+      width:
+        item.image_height > item.image_width
+          ? '100%'
+          : dimensions.width / 1.35,
       padding: 5,
       borderBottomRightRadius: 20,
       borderBottomLeftRadius: 20,
@@ -146,6 +152,15 @@ export default function FinalChatManager({type, id, item, en_key}) {
             color={Colors.red800}
             style={{height: 10, paddingHorizontal: 5, alignSelf: 'center'}}
           />
+        </>
+      ) : type === 'pdf' ? (
+        <>
+          <TouchableOpacity onPress={() => navigation.navigate("PDFViewer",{link:item.link})}>
+            <MaterialCommunityIcons
+              name="file-pdf-box"
+              style={styles.playiconAudio}
+            />
+          </TouchableOpacity>
         </>
       ) : null}
     </>

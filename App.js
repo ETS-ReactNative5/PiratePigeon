@@ -1,5 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {StatusBar, Linking, BackHandler} from 'react-native';
+import {
+  StatusBar,
+  Linking,
+  BackHandler,
+  PermissionsAndroid,
+} from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {NavigationContainer} from '@react-navigation/native';
@@ -9,6 +14,7 @@ import auth from '@react-native-firebase/auth';
 import PushNotification from 'react-native-push-notification';
 import DeviceInfo from 'react-native-device-info';
 import {useSelector, useDispatch} from 'react-redux';
+import Contacts from 'react-native-contacts';
 
 import GoogleSignUpScreen from './Source/Screen/GoogleSignInScreen';
 import HomeScreen from './Source/Screen/HomeScreen';
@@ -16,7 +22,9 @@ import ChatScreens from './Source/Screen/ChatScreen';
 import EditProfieScreen from './Source/Screen/EditProfieScreen';
 import MyContacts from './Source/Screen/MyContacts';
 import UserDataAction from './Source/Redux/Action/UserDataAction';
-import FirebaseServices from "./Source/Services/index";
+import FirebaseServices from './Source/Services/index';
+import SplashScreen from './Source/Screen/SplashScreen';
+// import PDFViewer from './Source/Screen/PDFViewer';
 
 const Stack = createStackNavigator();
 
@@ -77,6 +85,14 @@ const App = () => {
     _check_user_exist();
   }, []);
 
+  React.useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      () => true,
+    );
+    return () => backHandler.remove();
+  }, []);
+
   const get_device_info = async () => {
     DeviceInfo.getIpAddress().then(ip => {
       let uniqueId = DeviceInfo.getUniqueId();
@@ -95,25 +111,48 @@ const App = () => {
     await AsyncStorage.setItem('uniqueId', String(uniqueId));
   };
 
-  const [user_exist, set_user_exist] = useState(false);
+  const [user_exist, set_user_exist] = useState('0');
 
   const _check_user_exist = async () => {
     let data = await AsyncStorage.getItem('userData');
-    auth().onAuthStateChanged(function (user) {
-      if (user) {
-        dispatch(UserDataAction(JSON.parse(data)));
-        setTimeout(() => {
-          set_user_exist(true);
-        }, 1000);
+    let token = await AsyncStorage.getItem('fmctoken');
+    let data_setting_rule_interval = setInterval(() => {
+      if (data !== null) {
+        auth().onAuthStateChanged(function (user) {
+          if (user) {
+            FirebaseServices._update_user_last_seen(JSON.parse(data).email,token!==null?token:'');
+            dispatch(UserDataAction(JSON.parse(data)));
+            setTimeout(() => {
+              set_user_exist('1');
+              clearInterval(data_setting_rule_interval);
+            }, 750);
+          } else {
+            set_user_exist('2');
+          }
+        });
       } else {
-        set_user_exist(false);
+        set_user_exist('2');
       }
-    });
+    }, 2200);
   };
+
+  const Update_last_seen = async () => {
+    let data = await AsyncStorage.getItem('userData');
+    let token = await AsyncStorage.getItem('fmctoken');
+    if(data!==null){
+      FirebaseServices._update_user_last_seen(JSON.parse(data).email,token!==null?token:'');
+    }
+  }
+  
+  React.useEffect(() => {
+    setInterval(() => {
+      Update_last_seen();
+    }, 30000);
+  }, []);
 
   return (
     <>
-      {user_exist ? (
+      {user_exist === '1' ? (
         <NavigationContainer>
           <StatusBar backgroundColor="black" />
           <Stack.Navigator
@@ -122,9 +161,19 @@ const App = () => {
             <Stack.Screen name="HomeScreen" component={HomeScreen} />
             <Stack.Screen name="ChatScreen" component={ChatScreens} />
             <Stack.Screen name="MyContacts" component={MyContacts} />
+            {/* <Stack.Screen name="PDFViewer" component={PDFViewer} /> */}
           </Stack.Navigator>
         </NavigationContainer>
-      ) : (
+      ) : user_exist === '0' ? (
+        <NavigationContainer>
+          <StatusBar backgroundColor="black" />
+          <Stack.Navigator
+            screenOptions={{headerShown: false}}
+            initialRouteName={'SplashScreen'}>
+            <Stack.Screen name="SplashScreen" component={SplashScreen} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      ) : user_exist === '2' ? (
         <NavigationContainer>
           <StatusBar backgroundColor="black" />
           <Stack.Navigator
@@ -143,7 +192,7 @@ const App = () => {
             <Stack.Screen name="MyContacts" component={MyContacts} />
           </Stack.Navigator>
         </NavigationContainer>
-      )}
+      ) : null}
     </>
   );
 };

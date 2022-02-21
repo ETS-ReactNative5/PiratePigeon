@@ -38,7 +38,7 @@ export default function ChatScreen({navigation, route}) {
   const hideMenu = () => setVisible(false);
   const showMenu = () => setVisible(true);
 
-  // console.log(route.params.friend_details);
+  console.log(route.params.friend_details);
   // console.log(route.params.querySnapshot.key);
 
   const send_buttonPressed = async () => {
@@ -140,12 +140,12 @@ export default function ChatScreen({navigation, route}) {
   return (
     <SafeAreaView style={styles.mainframe}>
       <View style={styles.header}>
-        <AntDesign name="arrowleft" style={styles.backicon} />
+        <AntDesign name="arrowleft" style={styles.backicon} onPress={()=>navigation.goBack(null)} />
         <View style={{flex: 1, justifyContent: 'center'}}>
           <Text style={styles.username}>
             {route.params.friend_details.full_Name}
           </Text>
-          {/* <Text style={styles.lastseen}>Last Seen at 09:52 AM</Text> */}
+          <Text style={styles.lastseen}>Last Seen at {route?.params?.friend_details?.user_last_seen}</Text>
         </View>
 
         <Menu
@@ -185,6 +185,7 @@ export default function ChatScreen({navigation, route}) {
               type={item.type}
               item={item}
               en_key={route.params.querySnapshot.key}
+              navigation={navigation}
             />
           )}
         />

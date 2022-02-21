@@ -18,13 +18,13 @@ import Color from '../Constant/Color';
 import Constant from '../Constant/Constant';
 import HomeList from '../Component/HomeList';
 import AppDrawer from '../Component/AppDrawer';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 export default function HomeScreen({navigation}) {
   const theme = useSelector(state => state.theme.theme);
   const userData = useSelector(state => state.UserDataReducer.userData);
 
-  const [drawer_modal,set_drawer_modal] = useState(false);
+  const [drawer_modal, set_drawer_modal] = useState(false);
 
   const [searchQuery, setSearchQuery] = React.useState('');
   const onChangeSearch = query => setSearchQuery(query);
@@ -98,9 +98,9 @@ export default function HomeScreen({navigation}) {
     },
   });
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{flex:1}}>
       <View style={styles.headerContainer}>
-        <TouchableOpacity onPress={()=>set_drawer_modal(!drawer_modal)}>
+        <TouchableOpacity onPress={() => set_drawer_modal(!drawer_modal)}>
           <FontAwesome name="bars" style={styles.editicon} />
         </TouchableOpacity>
         <Text style={styles.headingtxt}>Messages</Text>
@@ -111,7 +111,10 @@ export default function HomeScreen({navigation}) {
         />
       </View>
       <ScrollView
-        style={{backgroundColor: theme === 'light' ? Color.light : Color.dark}}>
+        style={{
+          backgroundColor: theme === 'light' ? Color.light : Color.dark,
+          flex:1,
+        }}>
         <Searchbar
           placeholder="Search for users"
           onChangeText={onChangeSearch}
@@ -136,7 +139,10 @@ export default function HomeScreen({navigation}) {
           );
         })}
       </ScrollView>
-      <AppDrawer modalVisible={drawer_modal} onDrawerToggle={()=>set_drawer_modal(!drawer_modal)} />
+      <AppDrawer
+        modalVisible={drawer_modal}
+        onDrawerToggle={() => set_drawer_modal(!drawer_modal)}
+      />
     </SafeAreaView>
   );
 }

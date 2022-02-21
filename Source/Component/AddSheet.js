@@ -7,6 +7,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import ImagePicker from 'react-native-image-crop-picker';
+import DocumentPicker from 'react-native-document-picker';
 
 import Color from '../Constant/Color';
 import Constant from '../Constant/Constant';
@@ -29,14 +30,53 @@ export default function AddSheet({
     ImagePicker.openPicker({
       cropping: true,
       multiple: false,
+      mediaType: 'photo',
     }).then(image => {
       FirebaseServices.image_upload_firebase(
         image,
         current_room_id,
         friend_id,
         userData,
+        refRBSheet,
       );
     });
+  };
+
+  const _open_camera = async () => {
+    ImagePicker.openCamera({
+      cropping: false,
+      multiple: false,
+      mediaType: 'photo',
+    }).then(image => {
+      FirebaseServices.image_upload_firebase(
+        image,
+        current_room_id,
+        friend_id,
+        userData,
+        refRBSheet,
+      );
+    });
+  };
+
+  const _Document_Picker = async () => {
+    DocumentPicker.pickSingle()
+      .then(response => {
+        if (response.type === 'application/pdf') {
+          FirebaseServices._fireebase_document_upload(
+            response,
+            current_room_id,
+            friend_id,
+            userData,
+            refRBSheet,
+            'application/pdf',
+          );
+        } else {
+          alert('PDF is only Supported till');
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
 
   const styles = StyleSheet.create({
@@ -80,7 +120,7 @@ export default function AddSheet({
             <MaterialCommunityIcons name="file-document" style={styles.icon} />
             <Text style={styles.icondesctext}>Document</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.seperator} onPress={feature_update}>
+          <TouchableOpacity style={styles.seperator} onPress={_open_camera}>
             <MaterialCommunityIcons name="camera" style={styles.icon} />
             <Text style={styles.icondesctext}>Camera</Text>
           </TouchableOpacity>
