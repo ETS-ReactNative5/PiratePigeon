@@ -10,16 +10,6 @@ import {
 
 const _sign = async (navigation) => {
   try {
-    GoogleSignin.configure({
-      webClientId:
-        '1968068986-pa0bn3us3e0r8o9du93th7k7f8ehl2vm.apps.googleusercontent.com',
-      webClientSecret: 'GltiEqPh_P__67SlNUyBR9kB',
-      offlineAccess: true,
-      hostedDomain: '',
-      loginHint: '',
-      forceConsentPrompt: true,
-      accountName: '',
-    });
     await GoogleSignin.hasPlayServices();
     const userInfo = await GoogleSignin.signIn();
     const credential = auth.GoogleAuthProvider.credential(
@@ -31,8 +21,6 @@ const _sign = async (navigation) => {
     const firebaseUserCredential = await auth().signInWithCredential(
       credential,
     );
-    // await AsyncStorage.setItem('email',String(firebaseUserCredential.additionalUserInfo.profile.email + ''),);
-    // await AsyncStorage.setItem('name',String(firebaseUserCredential.additionalUserInfo.profile.name),);
     let userData = {
       full_Name: firebaseUserCredential.user.displayName,
       email: firebaseUserCredential.user.email,

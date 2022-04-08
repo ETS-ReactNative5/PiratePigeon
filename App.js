@@ -6,6 +6,13 @@ import {
   PermissionsAndroid,
 } from 'react-native';
 
+
+import {
+  GoogleSignin,
+  GoogleSigninButton,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -29,14 +36,14 @@ import SplashScreen from './Source/Screen/SplashScreen';
 const Stack = createStackNavigator();
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyAwmI3Rkd84W2paR5db55_hf5eQWZE17bg',
-  authDomain: 'pirate-pigeon.firebaseapp.com',
-  databaseURL: 'https://pirate-pigeon-default-rtdb.firebaseio.com',
-  projectId: 'pirate-pigeon',
-  storageBucket: 'pirate-pigeon.appspot.com',
-  messagingSenderId: '1968068986',
-  appId: '1:1968068986:web:b8a6587b6985cc5f1d5ec3',
-  measurementId: 'G-P9B9YEPBDV',
+  apiKey: "AIzaSyAKLAz-wJsM4m1oZRdYbgNOoSRwkdKsex4",
+  authDomain: "social-media-app-f2c66.firebaseapp.com",
+  databaseURL: "https://social-media-app-f2c66-default-rtdb.firebaseio.com",
+  projectId: "social-media-app-f2c66",
+  storageBucket: "social-media-app-f2c66.appspot.com",
+  messagingSenderId: "425917498658",
+  appId: "1:425917498658:web:613372ea474796994ed17b",
+  measurementId: "G-V7VDBNQCLW"
 };
 
 const App = () => {
@@ -149,6 +156,17 @@ const App = () => {
       Update_last_seen();
     }, 30000);
   }, []);
+
+
+  GoogleSignin.configure({
+    webClientId:'425917498658-vjp8i1jotlu271d5j7bun57j2804i8jd.apps.googleusercontent.com',
+    webClientSecret: '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',
+    offlineAccess: true,
+    hostedDomain: '',
+    loginHint: '',
+    forceConsentPrompt: true,
+    accountName: '',
+  });
 
   return (
     <>

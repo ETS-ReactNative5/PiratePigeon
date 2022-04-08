@@ -70,10 +70,13 @@ function GoogleSignUp({navigation,props}) {
         userInfo.serverAuthCode,
       );
       const firebaseUserCredential = await auth().signInWithCredential(credential);
-      await AsyncStorage.setItem('email',String(firebaseUserCredential.additionalUserInfo.profile.email + ''),);
-      await AsyncStorage.setItem('name',String(firebaseUserCredential.additionalUserInfo.profile.name),);
-      await AsyncStorage.setItem('userId',String(userInfo.user.id),);
-      updating_fmctoken_data_to_firebase(userInfo);
+      console.log("FirebaseUserCredential",firebaseUserCredential);
+      console.log("userInfo",userInfo);
+      console.log("credential",credential);
+      // await AsyncStorage.setItem('email',String(firebaseUserCredential.additionalUserInfo.profile.email + ''),);
+      // await AsyncStorage.setItem('name',String(firebaseUserCredential.additionalUserInfo.profile.name),);
+      // await AsyncStorage.setItem('userId',String(userInfo.user.id),);
+      // updating_fmctoken_data_to_firebase(userInfo);
     } catch (error) {
       // alert(error)
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {

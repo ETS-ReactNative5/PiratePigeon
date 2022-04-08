@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "1968068986",
-    "firebase_url": "https://pirate-pigeon-default-rtdb.firebaseio.com",
-    "project_id": "pirate-pigeon",
-    "storage_bucket": "pirate-pigeon.appspot.com"
+    "project_number": "425917498658",
+    "firebase_url": "https://social-media-app-f2c66-default-rtdb.firebaseio.com",
+    "project_id": "social-media-app-f2c66",
+    "storage_bucket": "social-media-app-f2c66.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1968068986:android:7708e88b08169d791d5ec3",
+        "mobilesdk_app_id": "1:425917498658:android:d9c8ad27736ccbca4ed17b",
         "android_client_info": {
           "package_name": "com.piratepigeon"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1968068986-qbhesoi6lpdah7cursukrv75fsbu49rr.apps.googleusercontent.com",
+          "client_id": "425917498658-ub3gm7eqa1b04tq35o53pcrlhl436l24.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.piratepigeon",
@@ -23,20 +23,20 @@
           }
         },
         {
-          "client_id": "1968068986-pa0bn3us3e0r8o9du93th7k7f8ehl2vm.apps.googleusercontent.com",
+          "client_id": "425917498658-vjp8i1jotlu271d5j7bun57j2804i8jd.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCavKpThCgsvR3bgmyAlGSVRC0cEKSstvQ"
+          "current_key": "AIzaSyAD9oYKpBO_jWCtMfXLilK4cLVF0tadkJc"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1968068986-pa0bn3us3e0r8o9du93th7k7f8ehl2vm.apps.googleusercontent.com",
+              "client_id": "425917498658-vjp8i1jotlu271d5j7bun57j2804i8jd.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
